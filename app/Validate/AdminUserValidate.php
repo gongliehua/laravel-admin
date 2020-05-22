@@ -11,9 +11,15 @@ class AdminUserValidate
     // 后台登录
     public static function login($params)
     {
-        $rules = [];
+        $rules = [
+            'username'=>'required|string|between:3,20',
+            'password'=>'required|string|min:6',
+        ];
         $messages = [];
-        $customAttributes = [];
+        $customAttributes = [
+            'username'=>'用户名',
+            'password'=>'密码',
+        ];
         $validator = Validator::make($params, $rules, $messages, $customAttributes);
         if ($validator->fails()) {
             return ['code'=>422, 'msg'=>$validator->errors()->first(), 'data'=>[]];

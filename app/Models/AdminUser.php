@@ -52,6 +52,19 @@ class AdminUser extends Authenticatable
     // 后台登录
     public function login($params)
     {
+        // 查找管理员
         $model = AdminUser::where('username', $params['username'])->first();
+        if (!$model) {
+            return ['code'=>404, 'msg'=>'用户名或密码错误', 'data'=>[]];
+        }
+        // 验证密码
+        if (!password_verify($params['password'], $model->password)) {
+            return ['code'=>404, 'msg'=>'用户名或密码错误', 'data'=>[]];
+        }
+        // 验证状态
+        if ($model->status == AdminUser::STATUS_INVALID) {
+            return ['code'=>400, 'msg'=>'用户名或密码错误', 'data'=>[]];
+        }
+        return ['code'=>200, 'msg'=>'验证成功', 'data'=>$model];
     }
 }

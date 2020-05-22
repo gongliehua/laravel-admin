@@ -14,14 +14,17 @@ class IndexController extends BaseController
     {
         $params = $request->all();
         if ($request->isMethod('post')) {
+            // 数据过滤
             $validate = AdminUserValidate::login($params);
             if ($validate['code'] != 200) {
                 return response()->json($validate);
             }
+            // 查找管理员
             $adminUser = (new AdminUser())->login($params);
             if ($adminUser['code'] != 200) {
                 return response()->json($adminUser);
             }
+            // 登录处理
             $remember = $request->has('remember');
             getAdminAuth()->login($adminUser['data'], $remember);
             return response()->json(['code'=>200, 'msg'=>'登录成功', 'data'=>[]]);
