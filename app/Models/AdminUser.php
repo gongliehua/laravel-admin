@@ -19,9 +19,9 @@ class AdminUser extends Authenticatable
     protected $appends = ['sex_text', 'status_text'];
 
     // 性别
-    const SEX_UNKNOWN = 1;
-    const SEX_MAN = 2;
-    const SEX_WOMAN = 3;
+    const SEX_UNKNOWN = 0;
+    const SEX_MAN = 1;
+    const SEX_WOMAN = 2;
     public $sexLabel = [self::SEX_UNKNOWN=>'保密', self::SEX_MAN=>'男', self::SEX_WOMAN=>'女'];
     public function getSexTextAttribute()
     {
@@ -55,16 +55,16 @@ class AdminUser extends Authenticatable
         // 查找管理员
         $model = AdminUser::where('username', $params['username'])->first();
         if (!$model) {
-            return ['code'=>404, 'msg'=>'用户名或密码错误', 'data'=>[]];
+            return ['code'=>404, 'data'=>[], 'msg'=>'用户名或密码错误'];
         }
         // 验证密码
         if (!password_verify($params['password'], $model->password)) {
-            return ['code'=>404, 'msg'=>'用户名或密码错误', 'data'=>[]];
+            return ['code'=>404, 'data'=>[], 'msg'=>'用户名或密码错误'];
         }
         // 验证状态
         if ($model->status == AdminUser::STATUS_INVALID) {
-            return ['code'=>400, 'msg'=>'用户名或密码错误', 'data'=>[]];
+            return ['code'=>400, 'data'=>[], 'msg'=>'用户名或密码错误'];
         }
-        return ['code'=>200, 'msg'=>'验证成功', 'data'=>$model];
+        return ['code'=>200, 'data'=>$model, 'msg'=>'验证成功'];
     }
 }

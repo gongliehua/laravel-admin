@@ -13,7 +13,7 @@ class AdminUserValidate
     {
         $rules = [
             'username'=>'required|string|between:3,20',
-            'password'=>'required|string|min:6',
+            'password'=>'required|string|between:6,20',
         ];
         $messages = [];
         $customAttributes = [
@@ -22,8 +22,8 @@ class AdminUserValidate
         ];
         $validator = Validator::make($params, $rules, $messages, $customAttributes);
         if ($validator->fails()) {
-            return ['code'=>422, 'msg'=>$validator->errors()->first(), 'data'=>[]];
+            return ['code'=>422, 'data'=>[], 'msg'=>$validator->errors()->first()];
         }
-        return ['code'=>200, 'msg'=>'验证成功', 'data'=>[]];
+        return ['code'=>200, 'data'=>[], 'msg'=>'验证成功'];
     }
 }

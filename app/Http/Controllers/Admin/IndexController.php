@@ -9,6 +9,19 @@ use Illuminate\Http\Request;
 // 基本操作
 class IndexController extends BaseController
 {
+    // 后台首页
+    public function index(Request $request)
+    {
+        return view('admin.index');
+    }
+
+    // 个人信息
+    public function profile(Request $request)
+    {
+        $admin = getAdminAuth()->user();
+        return view('admin.profile', compact('admin'));
+    }
+
     // 后台登录
     public function login(Request $request)
     {
@@ -27,7 +40,7 @@ class IndexController extends BaseController
             // 登录处理
             $remember = $request->has('remember');
             getAdminAuth()->login($adminUser['data'], $remember);
-            return response()->json(['code'=>200, 'msg'=>'登录成功', 'data'=>[]]);
+            return response()->json(['code'=>200, 'data'=>[], 'msg'=>'登录成功']);
         }
         return view('admin.login');
     }

@@ -26,7 +26,7 @@ class Admin
         // 未登录状态下 || 登录状态下
         if (!getAdminAuth()->check()) {
             if (!in_array($currentRouteName, $noNeedLogin)) {
-                return $request->ajax() ? response()->json(['code'=>401, 'msg'=>'请登录后操作', 'data'=>[]]) : redirect()->route('admin.login');
+                return $request->ajax() ? response()->json(['code'=>401, 'data'=>[], 'msg'=>'请登录后操作']) : redirect()->route('admin.login');
             }
         } else {
             $isDefaultAdmin = getAdminAuth()->id() == 1 ? true : false;
