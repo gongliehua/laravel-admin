@@ -31,7 +31,7 @@
                         </div>
                         <!-- /.box-header -->
                         <!-- form start -->
-                        <form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+                        <form class="form-horizontal" action="" method="post" enctype="multipart/form-data" onsubmit="return profile()">
                             {{ csrf_field() }}
                             {{ method_field('PUT') }}
                             <div class="box-body">
@@ -72,7 +72,8 @@
                                 <div class="form-group">
                                     <label for="avatar" class="col-sm-2 control-label">头像</label>
                                     <div class="col-sm-8">
-                                        <input type="file" class="avatar" name="avatar" data-initial-preview="" data-initial-caption="" />
+                                        <input type="file" class="avatar" name="avatar" data-initial-preview="{{ $admin->avatar ? asset($admin->avatar) : config('admin.avatar') }}"
+                                               data-initial-caption="{{ $admin->avatar ? asset($admin->avatar) : config('admin.avatar') }}" />
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -86,9 +87,13 @@
                                     <div class="col-sm-8">
                                         @foreach($admin->statusLabel as $key=>$val)
                                             <label class="radio-inline">
-                                                <input type="radio" name="status" value="{{ $key }}" @if($admin->status == $key) checked @endif > {{ $val }}
+                                                <input type="radio" name="status" value="{{ $key }}" @if($admin->status == $key) checked @endif @if($admin->id == 1) disabled @endif > {{ $val }}
                                             </label>
                                         @endforeach
+                                        @if($admin->id == 1)
+                                            <input type="hidden" name="status" value="{{ $admin->status }}">
+                                            <span class="help-block"><i class="fa fa-info-circle"></i> 默认管理员不受限制</span>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -133,5 +138,42 @@
                 "maxFileSize":2048
             });
         });
+        function profile() {
+            var formData = new FormData($('form')[0]);
+            $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+            $.ajax({
+                url: "{{ route('admin.profile') }}",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    if (res.code == 200) {
+                        layui.use('layer', function () {
+                            layer.ready(function () {
+                                layer.msg(res.msg, {}, function () {
+                                    location.href = "{{ route('admin') }}";
+                                });
+                            });
+                        });
+                    } else {
+                        layui.use('layer', function () {
+                            layer.ready(function () {
+                                layer.msg(res.msg);
+                            });
+                        });
+                    }
+                },
+                error: function () {
+                    layui.use('layer', function () {
+                        layer.ready(function () {
+                            layer.msg('网络错误');
+                        });
+                    });
+                }
+            });
+            return false;
+        }
     </script>
 @endsection

@@ -8,3 +8,5 @@
     <script src="{{ asset('bower_components/fastclick/lib/fastclick.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
+    <!-- layui -->
+    <script src="{{ asset('plugins/layui/layui.js') }}"></script>

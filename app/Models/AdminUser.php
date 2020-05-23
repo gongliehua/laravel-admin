@@ -49,21 +49,29 @@ class AdminUser extends Authenticatable
         return $this->belongsToMany('admin_user_permissions', 'App\Models\AdminPermission');
     }
 
+    // 个人信息
+    public function profile($params)
+    {
+        $params = array_only($params, ['username', 'password', 'name', 'sex', 'avatar', 'status']);
+        $model = AdminUser::where('id', getAdminAuth()->id())->update($params);
+        return $model ? ['code'=>200, 'data'=>[], 'msg'=>'修改成功'] : ['code'=>400, 'data'=>[], 'msg'=>'修改失败'];
+    }
+
     // 后台登录
     public function login($params)
     {
         // 查找管理员
         $model = AdminUser::where('username', $params['username'])->first();
         if (!$model) {
-            return ['code'=>404, 'data'=>[], 'msg'=>'用户名或密码错误'];
+            return ['code'=>422, 'data'=>[], 'msg'=>'用户名或密码错误'];
         }
         // 验证密码
         if (!password_verify($params['password'], $model->password)) {
-            return ['code'=>404, 'data'=>[], 'msg'=>'用户名或密码错误'];
+            return ['code'=>422, 'data'=>[], 'msg'=>'用户名或密码错误'];
         }
-        // 验证状态
-        if ($model->status == AdminUser::STATUS_INVALID) {
-            return ['code'=>400, 'data'=>[], 'msg'=>'用户名或密码错误'];
+        // 验证状态(默认管理员不受限制)
+        if ($model->id != 1 && $model->status == AdminUser::STATUS_INVALID) {
+            return ['code'=>401, 'data'=>[], 'msg'=>'您的账号已被禁用'];
         }
         return ['code'=>200, 'data'=>$model, 'msg'=>'验证成功'];
     }

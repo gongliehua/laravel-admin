@@ -4,7 +4,7 @@
             <!-- Sidebar user panel -->
             <div class="user-panel">
                 <div class="pull-left image">
-                    <img src="{{ ($avatar = getAdminAuth()->user()->avatar) ? asset($avatar) : asset('dist/img/user2-160x160.jpg') }}" class="img-circle" alt="User Image">
+                    <img src="{{ ($avatar = getAdminAuth()->user()->avatar) ? asset($avatar) : config('admin.avatar') }}" class="img-circle" alt="User Image">
                 </div>
                 <div class="pull-left info">
                     <p>{{ getAdminAuth()->user()->name }}</p>
