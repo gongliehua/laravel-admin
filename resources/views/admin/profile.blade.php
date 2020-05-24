@@ -92,7 +92,7 @@
                                         @endforeach
                                         @if($admin->id == 1)
                                             <input type="hidden" name="status" value="{{ $admin->status }}">
-                                            <span class="help-block"><i class="fa fa-info-circle"></i> 默认管理员不受限制</span>
+                                            <span class="help-block"><i class="fa fa-info-circle"></i> 默认管理员不受状态限制</span>
                                         @endif
                                     </div>
                                 </div>

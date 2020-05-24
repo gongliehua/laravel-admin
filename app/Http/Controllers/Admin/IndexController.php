@@ -43,7 +43,7 @@ class IndexController extends BaseController
             } else {
                 $params['avatar'] = getAdminAuth()->user()->avatar;
             }
-            // 默认管理员状态不受限制
+            // 默认管理员不受状态限制
             if ($admin->id == 1) {
                 $params['status'] = AdminUser::STATUS_NORMAL;
             }

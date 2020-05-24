@@ -6,6 +6,28 @@ function getAdminAuth()
     return \Illuminate\Support\Facades\Auth::guard('admin');
 }
 
+// 检测权限(用于页面上按钮之类的)
+function checkPermission($slug)
+{
+    if (getAdminAuth()->check()) {
+        $isDefaultAdmin = getAdminAuth()->id() == 1 ? true : false;
+        if (!$isDefaultAdmin && getAdminAuth()->user()->status == \App\Models\AdminUser::STATUS_INVALID) {
+            return false;
+        }
+        if ($isDefaultAdmin && !config('admin.develop') && in_array($slug, config('admin.noNeedDevelop'))) {
+            return false;
+        }
+        if (!$isDefaultAdmin && !in_array($slug, config('admin.noNeedRight'))) {
+            // 需要鉴权
+        }
+    } else {
+        if (!in_array($slug, config('admin.noNeedLogin'))) {
+            return false;
+        }
+    }
+    return true;
+}
+
 // 文件上传
 function fileUpload(&$file, $exceptSuffix = ['php'])
 {
