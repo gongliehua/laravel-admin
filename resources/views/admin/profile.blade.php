@@ -151,6 +151,7 @@
                 success: function (res) {
                     if (res.code == 200) {
                         layui.use('layer', function () {
+                            var layer = layui.layer;
                             layer.ready(function () {
                                 layer.msg(res.msg, {}, function () {
                                     location.href = "{{ route('admin') }}";
@@ -159,6 +160,7 @@
                         });
                     } else {
                         layui.use('layer', function () {
+                            var layer = layui.layer;
                             layer.ready(function () {
                                 layer.msg(res.msg);
                             });
@@ -167,6 +169,7 @@
                 },
                 error: function () {
                     layui.use('layer', function () {
+                        var layer = layui.layer;
                         layer.ready(function () {
                             layer.msg('网络错误');
                         });
