@@ -1,8 +1,11 @@
 @extends('admin.layouts.index')
 
-@section('title', '配置管理')
+@section('title', '角色管理')
 
 @section('header')
+    <style>
+        .m5 {margin: 5px 0;}
+    </style>
 @endsection
 
 @section('content')
@@ -10,17 +13,53 @@
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
-                配置管理
+                角色管理
                 <small></small>
             </h1>
             <ol class="breadcrumb">
                 <li><a href="{{ route('admin') }}"><i class="fa fa-home"></i> 首页</a></li>
-                <li class="active">配置管理</li>
+                <li>用户管理</li>
+                <li class="active">角色管理</li>
             </ol>
         </section>
 
         <!-- Main content -->
         <section class="content">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box">
+                        <div class="box-body">
+                            <div class="row">
+                                <form action="" method="get">
+                                    <div class="col-lg-3 col-sm-6 col-xs-12 clearfix m5">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">名称</span>
+                                            <input type="text" name="name" class="form-control" placeholder="名称" value="{{ @$_GET['name'] }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-xs-12 clearfix m5">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">状态</span>
+                                            <select name="status" id="status" class="form-control">
+                                                <option value="">全部</option>
+                                                @foreach((new \App\Models\AdminRole())->statusLabel as $key=>$value)
+                                                    <option value="{{ $key }}" @if(@$_GET['status'] == $key) selected @endif >{{ $value }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-sm-6 col-xs-12 clearfix m5">
+                                        <div class="input-group">
+                                            <a href="{{ route('admin.role') }}" class="btn btn-sm btn-default"><i class="fa fa-undo"></i> 重置</a>&nbsp;
+                                            <button type="submit" class="btn btn-sm btn-info"><i class="fa fa-search"></i> 提交</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-12">
                     <div class="box">
@@ -30,50 +69,36 @@
                             </div>
                         </div>
                         <!-- /.box-header -->
-                        <form action="" method="post" onsubmit="return sort()">
-                        {{ csrf_field() }}
                         <div class="box-body">
                             <table class="table table-bordered">
                                 <tr>
                                     <th>#</th>
-                                    <th>排序</th>
-                                    <th>标题</th>
-                                    <th>变量名</th>
-                                    <th>类型</th>
-                                    <th>配置值</th>
+                                    <th>名称</th>
+                                    <th>状态</th>
+                                    <th>备注</th>
                                     <th>操作</th>
                                 </tr>
                                 @if($result->count())
                                     @foreach($result as $key=>$value)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
+                                            <td>{{ str_limit($value->name) }}</td>
+                                            <td>{{ $value->status_text }}</td>
+                                            <td>{{ str_limit($value->remark) }}</td>
                                             <td>
-                                                <input type="text" name="sort[{{ $value->id }}]" value="{{ $value->sort }}" style="width: 70px;border: 1px solid #ccc;">
-                                            </td>
-                                            <td>{{ str_limit($value->title) }}</td>
-                                            <td>{{ str_limit($value->variable) }}</td>
-                                            <td>{{ $value->type_text }}</td>
-                                            <td>{{ str_limit($value->value) }}</td>
-                                            <td>
+                                                <a href="javascript:show({{ $value->id }});" class="btn btn-xs btn-info" title="查看"><i class="fa fa-eye"></i></a>
                                                 <a href="javascript:edit({{ $value->id }});" class="btn btn-xs btn-success" title="修改"><i class="fa fa-pencil"></i></a>
                                                 <a href="javascript:del({{ $value->id }});" class="btn btn-xs btn-danger" title="删除"><i class="fa fa-trash"></i></a>
                                             </td>
                                         </tr>
                                     @endforeach
-                                    <tr>
-                                        <td></td>
-                                        <td colspan="6">
-                                            <button type="submit" class="btn btn-sm btn-info">排序</button>
-                                        </td>
-                                    </tr>
                                 @else
                                     <tr>
-                                        <td colspan="7" class="text-center">暂无数据</td>
+                                        <td colspan="5" class="text-center">暂无数据</td>
                                     </tr>
                                 @endif
                             </table>
                         </div>
-                        </form>
                         <!-- /.box-body -->
                         <div class="box-footer clearfix">
                             @if($result->count())
@@ -108,7 +133,27 @@
                         type: 2,
                         title: '添加',
                         area: [_w, _h],
-                        content: "{{ route('admin.config.create') }}"
+                        content: "{{ route('admin.role.create') }}"
+                    });
+                });
+            });
+        }
+        function show(id) {
+            layui.use('layer', function () {
+                if (window.innerWidth >= 800) {
+                    var _w = '800px';
+                    var _h = '600px';
+                } else {
+                    var _w = '100%';
+                    var _h = '100%';
+                }
+                var layer = layui.layer;
+                layer.ready(function () {
+                    layer.open({
+                        type: 2,
+                        title: '查看',
+                        area: [_w, _h],
+                        content: "{{ route('admin.role.show') }}?id="+id
                     });
                 });
             });
@@ -128,7 +173,7 @@
                         type: 2,
                         title: '修改',
                         area: [_w, _h],
-                        content: "{{ route('admin.config.update') }}?id="+id
+                        content: "{{ route('admin.role.update') }}?id="+id
                     });
                 });
             });
@@ -140,7 +185,7 @@
                     layer.confirm('确定要删除吗？', function (index) {
                         $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
                         $.ajax({
-                            url: "{{ route('admin.config.delete') }}",
+                            url: "{{ route('admin.role.delete') }}",
                             type: "DELETE",
                             data: {id: id},
                             dataType: "json",
@@ -175,43 +220,6 @@
                     });
                 });
             });
-        }
-        function sort() {
-            $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
-            $.ajax({
-                url: "{{ route('admin.config') }}",
-                type: "PUT",
-                data: $('form').serialize(),
-                dataType: "json",
-                success: function (res) {
-                    if (res.code == 200) {
-                        layui.use('layer', function () {
-                            var layer = layui.layer;
-                            layer.ready(function () {
-                                layer.msg(res.msg, {}, function () {
-                                    location.reload();
-                                });
-                            });
-                        });
-                    } else {
-                        layui.use('layer', function () {
-                            var layer = layui.layer;
-                            layer.ready(function () {
-                                layer.msg(res.msg);
-                            });
-                        });
-                    }
-                },
-                error: function () {
-                    layui.use('layer', function () {
-                        var layer = layui.layer;
-                        layer.ready(function () {
-                            layer.msg('网络错误');
-                        });
-                    });
-                }
-            });
-            return false;
         }
     </script>
 @endsection

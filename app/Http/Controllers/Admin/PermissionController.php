@@ -50,6 +50,17 @@ class PermissionController extends BaseController
         return view('admin.permission.create', compact('allPermission'));
     }
 
+    // 查看
+    public function show(Request $request)
+    {
+        $info = AdminPermission::find($request->input('id'));
+        if (!$info) {
+            abort(422, '该信息未找到，建议刷新页面后重试！');
+        }
+        $allPermission = allPermission();
+        return view('admin.permission.show', compact('info', 'allPermission'));
+    }
+
     // 修改
     public function update(Request $request)
     {

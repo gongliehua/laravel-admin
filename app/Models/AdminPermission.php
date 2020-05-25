@@ -17,7 +17,7 @@ class AdminPermission extends BaseModel
     // 菜单
     const IS_MENU_ON = 1;
     const IS_MENU_OFF = 2;
-    public $is_menuLabel = [self::IS_MENU_ON=>'是', self::IS_MENU_OFF=>'否'];
+    public $is_menuLabel = [self::IS_MENU_OFF=>'否', self::IS_MENU_ON=>'是'];
     public function getIsMenuTextAttribute()
     {
         return $this->is_menuLabel[$this->is_menu] ?? $this->is_menu;
@@ -48,6 +48,7 @@ class AdminPermission extends BaseModel
         $model->icon = $params['icon'];
         $model->is_menu = $params['is_menu'];
         $model->status = $params['status'];
+        $model->remark = $params['remark'];
         $model->sort = strlen($params['sort']) ? $params['sort'] : $this->max('sort') + 1;
         return $model->save() ? ['code'=>200, 'data'=>[], 'msg'=>'添加成功'] : ['code'=>400, 'data'=>[], 'msg'=>'添加失败'];
     }
@@ -55,7 +56,7 @@ class AdminPermission extends BaseModel
     // 修改
     public function edit($params)
     {
-        $data = array_only($params, ['parent_id', 'name', 'slug', 'icon', 'is_menu', 'status', 'sort']);
+        $data = array_only($params, ['parent_id', 'name', 'slug', 'icon', 'is_menu', 'status', 'remark', 'sort']);
         $model = AdminPermission::where('id', $params['id'])->update($data);
         return $model ? ['code'=>200, 'data'=>[], 'msg'=>'修改成功'] : ['code'=>400, 'data'=>[], 'msg'=>'修改失败'];
     }
@@ -69,7 +70,7 @@ class AdminPermission extends BaseModel
         }
         // 拿到所有子权限ID
         $allChildPermissionId = getChildPermissionId($id);
-        array_pull($allChildPermissionId, $id);
+        array_push($allChildPermissionId, $id);
 
         // 删除
         AdminUserPermission::whereIn('admin_permission_id', $allChildPermissionId)->delete();

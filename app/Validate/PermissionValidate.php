@@ -35,7 +35,7 @@ class PermissionValidate
         ];
         $messages = [];
         $customAttributes = [
-            'title'=>'名称',
+            'name'=>'名称',
             'slug'=>'标识',
             'icon'=>'图标',
             'is_menu'=>'菜单',
@@ -51,7 +51,7 @@ class PermissionValidate
         return ['code'=>200, 'data'=>[], 'msg'=>'验证成功'];
     }
 
-    // 添加
+    // 修改
     public static function edit($params)
     {
         // 基本信息
@@ -75,7 +75,7 @@ class PermissionValidate
             'is_menu'=>'required|in:' . implode(',', array_keys($model->is_menuLabel)),
             'status'=>'required|in:' . implode(',', array_keys($model->statusLabel)),
             'remark'=>'present|nullable|string|max:200',
-            'sort'=>'present|nullable|integer',
+            'sort'=>'required|integer',
             'parent_id'=>[
                 'required',
                 function($attribute,$value,$fail) {
@@ -93,7 +93,7 @@ class PermissionValidate
         ];
         $customAttributes = [
             'id'=>'ID',
-            'title'=>'名称',
+            'name'=>'名称',
             'slug'=>'标识',
             'icon'=>'图标',
             'is_menu'=>'菜单',

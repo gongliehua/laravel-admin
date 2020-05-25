@@ -67,4 +67,12 @@ class AdminConfig extends BaseModel
         $model = AdminConfig::where('id', $params['id'])->update($data);
         return $model ? ['code'=>200, 'data'=>[], 'msg'=>'修改成功'] : ['code'=>400, 'data'=>[], 'msg'=>'修改失败'];
     }
+
+    // 排序
+    public static function sort($params)
+    {
+        foreach ($params as $key=>$value) {
+            AdminConfig::where('id', (int)$key)->update(['sort'=>(int)$value]);
+        }
+    }
 }

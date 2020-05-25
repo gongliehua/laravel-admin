@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 25/05/2020 13:29:00
+ Date: 26/05/2020 00:48:28
 */
 
 SET NAMES utf8mb4;
@@ -33,7 +33,12 @@ CREATE TABLE `admin_configs`  (
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   `deleted_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '配置表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '配置表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of admin_configs
+-- ----------------------------
+INSERT INTO `admin_configs` VALUES (7, '1', 'fasd', 1, '1', NULL, 123, '2020-05-25 17:33:07', '2020-05-25 22:43:44', NULL);
 
 -- ----------------------------
 -- Table structure for admin_operation_logs
@@ -50,7 +55,12 @@ CREATE TABLE `admin_operation_logs`  (
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   `deleted_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '操作日志表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '操作日志表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of admin_operation_logs
+-- ----------------------------
+INSERT INTO `admin_operation_logs` VALUES (1, 'fdsa', 'dfsa', 's', 's', 1, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for admin_permissions
@@ -70,7 +80,19 @@ CREATE TABLE `admin_permissions`  (
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   `deleted_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '权限表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '权限表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of admin_permissions
+-- ----------------------------
+INSERT INTO `admin_permissions` VALUES (1, 0, '用户管理', NULL, 'fa-circle-o', 1, 1, NULL, 1, '2020-05-25 23:14:07', '2020-05-25 23:22:28', NULL);
+INSERT INTO `admin_permissions` VALUES (2, 1, '权限管理', NULL, 'fa-circle-o', 1, 1, NULL, 1, '2020-05-25 23:15:05', '2020-05-25 23:30:56', '2020-05-25 23:30:56');
+INSERT INTO `admin_permissions` VALUES (3, 0, '系统管理', NULL, 'fa-circle-o', 1, 1, NULL, 2, '2020-05-26 00:17:20', '2020-05-26 00:17:20', NULL);
+INSERT INTO `admin_permissions` VALUES (4, 1, '用户列表', NULL, 'fa-circle-o', 1, 1, NULL, 3, '2020-05-26 00:17:30', '2020-05-26 00:17:30', NULL);
+INSERT INTO `admin_permissions` VALUES (5, 1, '角色管理', NULL, 'fa-circle-o', 1, 1, NULL, 4, '2020-05-26 00:17:42', '2020-05-26 00:17:42', NULL);
+INSERT INTO `admin_permissions` VALUES (6, 1, '权限管理', NULL, 'fa-circle-o', 1, 1, NULL, 5, '2020-05-26 00:17:57', '2020-05-26 00:17:57', NULL);
+INSERT INTO `admin_permissions` VALUES (7, 3, '系统设置', NULL, 'fa-circle-o', 1, 1, NULL, 6, '2020-05-26 00:18:08', '2020-05-26 00:18:08', NULL);
+INSERT INTO `admin_permissions` VALUES (8, 3, '操作日志', NULL, 'fa-circle-o', 1, 1, NULL, 7, '2020-05-26 00:18:18', '2020-05-26 00:18:18', NULL);
 
 -- ----------------------------
 -- Table structure for admin_role_permissions
@@ -107,7 +129,13 @@ CREATE TABLE `admin_roles`  (
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   `deleted_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of admin_roles
+-- ----------------------------
+INSERT INTO `admin_roles` VALUES (1, '所有权限', 1, NULL, '2020-05-26 00:20:28', '2020-05-26 00:43:26', '2020-05-26 00:43:26');
+INSERT INTO `admin_roles` VALUES (2, 'dfsas', 2, 'a', '2020-05-26 00:39:32', '2020-05-26 00:43:20', '2020-05-26 00:43:20');
 
 -- ----------------------------
 -- Table structure for admin_user_permissions

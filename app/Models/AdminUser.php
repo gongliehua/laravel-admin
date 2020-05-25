@@ -40,13 +40,13 @@ class AdminUser extends Authenticatable
     // 获取关联的角色
     public function adminRole()
     {
-        return $this->belongsToMany('admin_role_users', 'App\Models\AdminRole');
+        return $this->belongsToMany('App\Models\AdminRole', 'admin_role_users');
     }
 
     // 获取管理员直接拥有的权限
     public function adminPermission()
     {
-        return $this->belongsToMany('admin_user_permissions', 'App\Models\AdminPermission');
+        return $this->belongsToMany('App\Models\AdminPermission', 'admin_user_permissions');
     }
 
     // 个人信息

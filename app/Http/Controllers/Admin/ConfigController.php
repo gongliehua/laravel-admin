@@ -24,6 +24,12 @@ class ConfigController extends BaseController
     // 列表
     public function index(Request $request)
     {
+        // 排序
+        if ($request->isMethod('put')) {
+            $sort = $request->input('sort');
+            (new AdminConfig())->sort($sort);
+            return ['code'=>200, 'data'=>[], 'msg'=>'排序成功'];
+        }
         $result = AdminConfig::orderBy('sort', 'ASC')->paginate();
         return view('admin.config.index', compact('result'));
     }
