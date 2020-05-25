@@ -14,7 +14,7 @@
             <!-- sidebar menu: : style can be found in sidebar.less -->
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header">菜单</li>
-                {{-- 首页每个人都有权限看，所以直接写在这里 --}}
+                {{-- 每个人都应该有权限查看，所以直接写在这里 --}}
                 <li @if(\Illuminate\Support\Facades\Route::currentRouteName() == 'admin') class="active" @endif >
                     <a href="{{ route('admin') }}">
                         <i class="fa fa-home"></i> <span>首页</span>
@@ -45,7 +45,7 @@
                         <li><a href="{{ route('admin.operation_log') }}"><i class="fa fa-circle-o"></i> 日志列表</a></li>
                     </ul>
                 </li>
-                {{-- 开发时辅助功能，所以直接写在这里 --}}
+                {{-- 开发阶段的辅助功能，所以直接写在这里 --}}
                 @if(config('admin.develop') && getAdminAuth()->id() == 1)
                     <li @if(\Illuminate\Support\Facades\Route::currentRouteName() == 'admin.config') class="active" @endif >
                         <a href="{{ route('admin.config') }}">

@@ -3,8 +3,6 @@
 @section('title', '个人信息')
 
 @section('header')
-    <!-- fileinput -->
-    <link rel="stylesheet" href="{{ asset('plugins/bootstrap-fileinput/css/fileinput.min.css') }}">
 @endsection
 
 @section('content')
@@ -27,7 +25,7 @@
                 <div class="col-md-12">
                     <div class="box box-info">
                         <div class="box-header with-border">
-                            <h3 class="box-title">编辑</h3>
+                            <h3 class="box-title">修改</h3>
                         </div>
                         <!-- /.box-header -->
                         <!-- form start -->
@@ -118,9 +116,6 @@
 @endsection
 
 @section('footer')
-    <!-- fileinput -->
-    <script src="{{ asset('plugins/bootstrap-fileinput/js/fileinput.min.js') }}"></script>
-    <script src="{{ asset('plugins/bootstrap-fileinput/js/locales/zh.js') }}"></script>
     <script>
         $(function () {
             $("input.avatar").fileinput({

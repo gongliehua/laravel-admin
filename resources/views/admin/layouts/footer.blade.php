@@ -10,3 +10,8 @@
     <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
     <!-- layui -->
     <script src="{{ asset('plugins/layui/layui.js') }}"></script>
+    <!-- Select2 -->
+    <script src="{{ asset('bower_components/select2/dist/js/select2.full.min.js') }}"></script>
+    <!-- fileinput -->
+    <script src="{{ asset('plugins/bootstrap-fileinput/js/fileinput.min.js') }}"></script>
+    <script src="{{ asset('plugins/bootstrap-fileinput/js/locales/zh.js') }}"></script>

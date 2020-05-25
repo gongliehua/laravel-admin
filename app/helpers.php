@@ -47,5 +47,5 @@ function fileUpload(&$file, $exceptSuffix = ['php'])
     }
     $fileName = sha1(uniqid(null, true)) . '.' . $fileSuffix;
     $filePath = $relativePath . '/' . $fileName;
-    return $file->move($uploadPath, $fileName) ? ['code'=>200, 'data'=>[], 'msg'=>$filePath] : ['code'=>422, 'data'=>[], 'msg'=>'文件上传失败'];
+    return $file->move($uploadPath, $fileName) ? ['code'=>200, 'data'=>$filePath, 'msg'=>'文件上传成功'] : ['code'=>422, 'data'=>[], 'msg'=>'文件上传失败'];
 }

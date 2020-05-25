@@ -52,8 +52,8 @@ class AdminUser extends Authenticatable
     // 个人信息
     public function profile($params)
     {
-        $params = array_only($params, ['username', 'password', 'name', 'sex', 'avatar', 'status']);
-        $model = AdminUser::where('id', getAdminAuth()->id())->update($params);
+        $data = array_only($params, ['username', 'password', 'name', 'sex', 'avatar', 'status']);
+        $model = AdminUser::where('id', getAdminAuth()->id())->update($data);
         return $model ? ['code'=>200, 'data'=>[], 'msg'=>'修改成功'] : ['code'=>400, 'data'=>[], 'msg'=>'修改失败'];
     }
 
@@ -71,7 +71,7 @@ class AdminUser extends Authenticatable
         }
         // 验证状态(默认管理员不受限制)
         if ($model->id != 1 && $model->status == AdminUser::STATUS_INVALID) {
-            return ['code'=>401, 'data'=>[], 'msg'=>'您的账号已被禁用'];
+            return ['code'=>422, 'data'=>[], 'msg'=>'您的账号已被禁用'];
         }
         return ['code'=>200, 'data'=>$model, 'msg'=>'验证成功'];
     }

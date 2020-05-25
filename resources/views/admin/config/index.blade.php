@@ -1,6 +1,6 @@
 @extends('admin.layouts.index')
 
-@section('title', '配置列表')
+@section('title', '配置管理')
 
 @section('header')
 @endsection
@@ -26,7 +26,7 @@
                     <div class="box">
                         <div class="box-header with-border">
                             <div class="pull-left">
-                                <a href="javascript:add();" class="btn btn-sm btn-success" title="新增"><i class="fa fa-plus"></i><span class="hidden-xs"> 新增</span></a>
+                                <a href="javascript:add();" class="btn btn-sm btn-success" title="添加"><i class="fa fa-plus"></i><span class="hidden-xs"> 添加</span></a>
                             </div>
                         </div>
                         <!-- /.box-header -->
@@ -35,8 +35,8 @@
                                 <tr>
                                     <th>#</th>
                                     <th>排序</th>
-                                    <th>名称</th>
-                                    <th>变量</th>
+                                    <th>标题</th>
+                                    <th>变量名</th>
                                     <th>类型</th>
                                     <th>配置值</th>
                                     <th>操作</th>
@@ -46,13 +46,13 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $value->sort }}</td>
-                                            <td>{{ $value->name }}</td>
-                                            <td>{{ $value->variable }}</td>
+                                            <td>{{ str_limit($value->title) }}</td>
+                                            <td>{{ str_limit($value->variable) }}</td>
                                             <td>{{ $value->type_text }}</td>
-                                            <td>{{ $value->value }}</td>
+                                            <td>{{ str_limit($value->value) }}</td>
                                             <td>
-                                                <a href="javascript:edit({{ $value->id }});" class="btn btn-xs btn-success"><i class="fa fa-pencil"></i></a>
-                                                <a href="javascript:del({{ $value->id }});" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></a>
+                                                <a href="javascript:edit({{ $value->id }});" class="btn btn-xs btn-success" title="修改"><i class="fa fa-pencil"></i></a>
+                                                <a href="javascript:del({{ $value->id }});" class="btn btn-xs btn-danger" title="删除"><i class="fa fa-trash"></i></a>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -65,9 +65,11 @@
                         </div>
                         <!-- /.box-body -->
                         <div class="box-footer clearfix">
-                            <div class="pull-left" style="padding-top: 8px;white-space: nowrap;">
-                                显示第 {{ $result->firstItem() }} 到第 {{ $result->lastItem() }} 条记录，总共{{ $result->total() }}条记录
-                            </div>
+                            @if($result->count())
+                                <div class="pull-left" style="padding-top: 8px;white-space: nowrap;">
+                                    显示第 {{ $result->firstItem() }} 到第 {{ $result->lastItem() }} 条记录，总共{{ $result->total() }}条记录
+                                </div>
+                            @endif
                             {{ $result->links('vendor.pagination.admin') }}
                         </div>
                     </div>
@@ -113,7 +115,7 @@
                 layer.ready(function () {
                     layer.open({
                         type: 2,
-                        title: '编辑',
+                        title: '修改',
                         area: [_w, _h],
                         content: "{{ route('admin.config.update') }}?id="+id
                     });
@@ -125,7 +127,40 @@
                 var layer = layui.layer;
                 layer.ready(function () {
                     layer.confirm('确定要删除吗？', function (index) {
-                        // 执行删除
+                        $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+                        $.ajax({
+                            url: "{{ route('admin.config.delete') }}",
+                            type: "DELETE",
+                            data: {id: id},
+                            dataType: "json",
+                            success: function (res) {
+                                if (res.code == 200) {
+                                    layui.use('layer', function () {
+                                        var layer = layui.layer;
+                                        layer.ready(function () {
+                                            layer.msg(res.msg, {}, function () {
+                                                location.reload();
+                                            });
+                                        });
+                                    });
+                                } else {
+                                    layui.use('layer', function () {
+                                        var layer = layui.layer;
+                                        layer.ready(function () {
+                                            layer.msg(res.msg);
+                                        });
+                                    });
+                                }
+                            },
+                            error: function () {
+                                layui.use('layer', function () {
+                                    var layer = layui.layer;
+                                    layer.ready(function () {
+                                        layer.msg('网络错误');
+                                    });
+                                });
+                            }
+                        });
                     });
                 });
             });

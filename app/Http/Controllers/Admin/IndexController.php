@@ -36,7 +36,7 @@ class IndexController extends BaseController
             if ($avatar = $request->file('avatar')) {
                 $avatarResult = fileUpload($avatar);
                 if ($avatarResult['code'] == 200) {
-                    $params['avatar'] = $avatarResult['msg'];
+                    $params['avatar'] = $avatarResult['data'];
                 } else {
                     return response()->json($avatarResult);
                 }
