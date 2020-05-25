@@ -26,6 +26,27 @@ class AdminConfig extends BaseModel
         return $this->typeLabel[$this->type] ?? $this->type;
     }
 
+    // 设置
+    public function setting($params)
+    {
+        // 只能数据表来循环，因为checkbox框可能一个都没选(也就是什么都没传过来)
+        $result = AdminConfig::all();
+        foreach ($result as $value) {
+            // 判断是否传值，否则就清空配置值
+            if (isset($params[$value->id])) {
+                // 如果传过来的是数组,就通过,符号分隔
+                if (is_array($params[$value->id])) {
+                    AdminConfig::where('id', $value->id)->update(['value'=>implode(',', $params[$value->id])]);
+                } else {
+                    AdminConfig::where('id', $value->id)->update(['value'=>$params[$value->id]]);
+                }
+            } else {
+                // 没传值则清空配置值
+                AdminConfig::where('id', $value->id)->update(['value'=>null]);
+            }
+        }
+    }
+
     // 添加
     public function add($params)
     {

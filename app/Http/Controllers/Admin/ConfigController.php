@@ -3,12 +3,24 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\AdminConfig;
-use App\Validate\AdminConfigValidate;
+use App\Validate\ConfigValidate;
 use Illuminate\Http\Request;
 
 // 配置
 class ConfigController extends BaseController
 {
+    // 设置
+    public function setting(Request $request)
+    {
+        $params = $request->input('value');
+        if ($request->isMethod('put')) {
+            (new AdminConfig())->setting($params);
+            return response()->json(['code'=>200, 'data'=>[], 'msg'=>'修改成功']);
+        }
+        $result = AdminConfig::orderBy('sort', 'ASC')->get();
+        return view('admin.config.setting', compact('result'));
+    }
+
     // 列表
     public function index(Request $request)
     {
@@ -22,7 +34,7 @@ class ConfigController extends BaseController
         $params = $request->all();
         if ($request->isMethod('post')) {
             // 数据过滤
-            $validate = AdminConfigValidate::add($params);
+            $validate = ConfigValidate::add($params);
             if ($validate['code'] != 200) {
                 return response()->json($validate);
             }
@@ -39,7 +51,7 @@ class ConfigController extends BaseController
         $params = $request->all();
         if ($request->isMethod('put')) {
             // 数据过滤
-            $validate = AdminConfigValidate::edit($params);
+            $validate = ConfigValidate::edit($params);
             if ($validate['code'] != 200) {
                 return response()->json($validate);
             }

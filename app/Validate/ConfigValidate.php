@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 // 配置
-class AdminConfigValidate
+class ConfigValidate
 {
     // 添加
     public static function add($params)
