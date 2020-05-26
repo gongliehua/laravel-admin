@@ -11,9 +11,9 @@
                 <form class="form-horizontal" action="" method="post" enctype="multipart/form-data" onsubmit="">
                     <div class="box-body">
                         <div class="form-group">
-                            <label for="name" class="col-sm-2 control-label">名称</label>
+                            <label for="title" class="col-sm-2 control-label">标题</label>
                             <div class="col-sm-9">
-                                <input type="text" name="name" value="{{ $info->name  }}" class="form-control" id="name" placeholder="名称" autocomplete="off">
+                                <input type="text" name="title" value="{{ $info->title  }}" class="form-control" id="title" placeholder="标题" autocomplete="off">
                             </div>
                         </div>
                         <div class="form-group">
@@ -37,7 +37,7 @@
                         <div class="form-group">
                             <label for="admin_user_id" class="col-sm-2 control-label">操作用户</label>
                             <div class="col-sm-9">
-                                <input type="text" name="admin_user_id" value="{{ $info->adminUser->name }}" class="form-control" placeholder="操作用户" />
+                                <input type="text" name="admin_user_id" value="{{ $info->admin->username }}" class="form-control" placeholder="操作用户" />
                             </div>
                         </div>
                     </div>

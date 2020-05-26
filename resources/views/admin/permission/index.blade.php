@@ -38,7 +38,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>排序</th>
-                                    <th>名称</th>
+                                    <th>标题</th>
                                     <th>标识</th>
                                     <th>图标</th>
                                     <th>菜单</th>
@@ -52,7 +52,7 @@
                                             <td>
                                                 <input type="text" name="sort[{{ $value['id'] }}]" value="{{ $value['sort'] }}" style="width: 70px;border: 1px solid #ccc;">
                                             </td>
-                                            <td>@if($value['parent_id'] == 0) ｜ @endif {{ str_repeat('－', $value['level'] * 4) }} {{ $value['name'] }}</td>
+                                            <td>@if($value['parent_id'] == 0) ｜ @endif {{ str_repeat('－', $value['level'] * 4) }} {{ $value['title'] }}</td>
                                             <td>{{ str_limit($value['slug']) }}</td>
                                             <td>{{ $value['icon'] }}</td>
                                             <td>{{ $value['is_menu_text'] }}</td>

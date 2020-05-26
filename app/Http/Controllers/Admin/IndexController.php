@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\AdminUser;
-use App\Validate\AdminUserValidate;
+use App\Models\Admin;
+use App\Validate\AdminValidate;
 use Illuminate\Http\Request;
 
 // 基本操作
@@ -22,7 +22,7 @@ class IndexController extends BaseController
         $admin = getAdminAuth()->user();
         if ($request->isMethod('put')) {
             // 数据过滤
-            $validate = AdminUserValidate::profile($params);
+            $validate = AdminValidate::profile($params);
             if ($validate['code'] != 200) {
                 return response()->json($validate);
             }
@@ -45,10 +45,10 @@ class IndexController extends BaseController
             }
             // 默认管理员不受状态限制
             if ($admin->id == 1) {
-                $params['status'] = AdminUser::STATUS_NORMAL;
+                $params['status'] = Admin::STATUS_NORMAL;
             }
             // 数据操作
-            $adminUser = (new AdminUser())->profile($params);
+            $adminUser = (new Admin())->profile($params);
             return response()->json($adminUser);
         }
         return view('admin.profile', compact('admin'));
@@ -60,12 +60,12 @@ class IndexController extends BaseController
         $params = $request->all();
         if ($request->isMethod('post')) {
             // 数据过滤
-            $validate = AdminUserValidate::login($params);
+            $validate = AdminValidate::login($params);
             if ($validate['code'] != 200) {
                 return response()->json($validate);
             }
             // 核对数据
-            $adminUser = (new AdminUser())->login($params);
+            $adminUser = (new Admin())->login($params);
             if ($adminUser['code'] != 200) {
                 return response()->json($adminUser);
             }

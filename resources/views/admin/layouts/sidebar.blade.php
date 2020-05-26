@@ -28,7 +28,7 @@
                         </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li><a href="{{ route('admin.admin_user') }}"><i class="fa fa-circle-o"></i> 用户管理</a></li>
+                        <li><a href="{{ route('admin.admin') }}"><i class="fa fa-circle-o"></i> 用户管理</a></li>
                         <li><a href="{{ route('admin.role') }}"><i class="fa fa-circle-o"></i> 角色管理</a></li>
                         <li><a href="{{ route('admin.permission') }}"><i class="fa fa-circle-o"></i> 权限管理</a></li>
                     </ul>

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\AdminOperationLog;
+use App\Models\OperationLog;
 use Illuminate\Http\Request;
 
 // 操作日志
@@ -12,14 +12,14 @@ class OperationLogController extends BaseController
     public function index(Request $request)
     {
         $params = $request->all();
-        $result = (new AdminOperationLog())->search($params);
+        $result = (new OperationLog())->search($params);
         return view('admin.operationLog.index', compact('result'));
     }
 
     // 查看
     public function show(Request $request)
     {
-        $info = AdminOperationLog::with(['adminUser'=>function($query){
+        $info = OperationLog::with(['admin'=>function($query){
             $query->withTrashed();
         }])->find($request->input('id'));
         if (!$info) {

@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\DB;
 
 // 管理员
-class AdminUser extends Authenticatable
+class Admin extends Authenticatable
 {
     use Notifiable;
 
@@ -39,22 +39,22 @@ class AdminUser extends Authenticatable
     }
 
     // 获取关联的角色
-    public function adminRole()
+    public function role()
     {
-        return $this->belongsToMany('App\Models\AdminRole', 'admin_role_users');
+        return $this->belongsToMany('App\Models\Role', 'role_users');
     }
 
     // 获取管理员直接拥有的权限
-    public function adminPermission()
+    public function permission()
     {
-        return $this->belongsToMany('App\Models\AdminPermission', 'admin_user_permissions');
+        return $this->belongsToMany('App\Models\Permission', 'admin_permissions');
     }
 
     // 个人信息
     public function profile($params)
     {
-        $data = array_only($params, ['username', 'password', 'name', 'sex', 'avatar', 'status']);
-        $model = AdminUser::where('id', getAdminAuth()->id())->update($data);
+        $data = array_only($params, ['username', 'password', 'name', 'sex', 'avatar', 'email', 'status']);
+        $model = Admin::where('id', getAdminAuth()->id())->update($data);
         return $model ? ['code'=>200, 'data'=>[], 'msg'=>'修改成功'] : ['code'=>400, 'data'=>[], 'msg'=>'修改失败'];
     }
 
@@ -62,7 +62,7 @@ class AdminUser extends Authenticatable
     public function login($params)
     {
         // 查找管理员
-        $model = AdminUser::where('username', $params['username'])->first();
+        $model = Admin::where('username', $params['username'])->first();
         if (!$model) {
             return ['code'=>422, 'data'=>[], 'msg'=>'用户名或密码错误'];
         }
@@ -71,7 +71,7 @@ class AdminUser extends Authenticatable
             return ['code'=>422, 'data'=>[], 'msg'=>'用户名或密码错误'];
         }
         // 验证状态(默认管理员不受限制)
-        if ($model->id != 1 && $model->status == AdminUser::STATUS_INVALID) {
+        if ($model->id != 1 && $model->status == Admin::STATUS_INVALID) {
             return ['code'=>422, 'data'=>[], 'msg'=>'您的账号已被禁用'];
         }
         return ['code'=>200, 'data'=>$model, 'msg'=>'验证成功'];
@@ -80,7 +80,7 @@ class AdminUser extends Authenticatable
     // 列表
     public function search($params)
     {
-        $query = new AdminUser();
+        $query = new Admin();
         if (isset($params['username']) && $params['username'] !== '') {
             $query = $query->where('username', 'like', '%' . $params['username'] . '%');
         }
@@ -106,7 +106,7 @@ class AdminUser extends Authenticatable
         try {
             DB::beginTransaction();
             // 管理员入库
-            $model = new AdminUser();
+            $model = new Admin();
             $model->username = $params['username'];
             $model->password = $params['password'];
             $model->name = $params['name'];
@@ -118,25 +118,25 @@ class AdminUser extends Authenticatable
                 throw new \Exception('添加失败');
             }
             // 关联角色入库
-            if (isset($params['admin_role_id']) && is_array($params['admin_role_id'])) {
-                $params['admin_role_id'] = AdminRole::whereIn('id', $params['admin_role_id'])->pluck('id')->toArray();
-                foreach ($params['admin_role_id'] as $value) {
-                    $adminRoleUser = new AdminRoleUser();
-                    $adminRoleUser->admin_role_id = $value;
-                    $adminRoleUser->admin_user_id = $model->id;
-                    if (!$adminRoleUser->save()) {
+            if (isset($params['role_id']) && is_array($params['role_id'])) {
+                $params['role_id'] = Role::whereIn('id', $params['role_id'])->pluck('id')->toArray();
+                foreach ($params['role_id'] as $value) {
+                    $roleUser = new RoleUser();
+                    $roleUser->role_id = $value;
+                    $roleUser->admin_id = $model->id;
+                    if (!$roleUser->save()) {
                         throw new \Exception('添加失败');
                     }
                 }
             }
             // 关联权限入库
-            if (isset($params['admin_permission_id']) && is_array($params['admin_permission_id'])) {
-                $params['admin_permission_id'] = AdminPermission::whereIn('id', $params['admin_permission_id'])->pluck('id')->toArray();
-                foreach ($params['admin_permission_id'] as $value) {
-                    $adminUserPermission = new AdminUserPermission();
-                    $adminUserPermission->admin_user_id = $model->id;
-                    $adminUserPermission->admin_permission_id = $value;
-                    if (!$adminUserPermission->save()) {
+            if (isset($params['permission_id']) && is_array($params['permission_id'])) {
+                $params['permission_id'] = Permission::whereIn('id', $params['permission_id'])->pluck('id')->toArray();
+                foreach ($params['permission_id'] as $value) {
+                    $adminPermission = new AdminPermission();
+                    $adminPermission->admin_id = $model->id;
+                    $adminPermission->permission_id = $value;
+                    if (!$adminPermission->save()) {
                         throw new \Exception('添加失败');
                     }
                 }
@@ -156,33 +156,33 @@ class AdminUser extends Authenticatable
             DB::beginTransaction();
             // 管理员入库
             $data = array_only($params, ['username', 'password', 'name', 'sex', 'avatar', 'email', 'status']);
-            $model = AdminUser::where('id', $params['id'])->update($data);
+            $model = Admin::where('id', $params['id'])->update($data);
             if (!$model) {
                 throw new \Exception('修改失败');
             }
             // 删除拥有过的角色，权限
-            AdminRoleUser::where('admin_user_id', $params['id'])->delete();
-            AdminUserPermission::where('admin_user_id', $params['id'])->delete();
+            RoleUser::where('admin_id', $params['id'])->delete();
+            AdminPermission::where('admin_id', $params['id'])->delete();
             // 关联角色入库
-            if (isset($params['admin_role_id']) && is_array($params['admin_role_id'])) {
-                $params['admin_role_id'] = AdminRole::whereIn('id', $params['admin_role_id'])->pluck('id')->toArray();
-                foreach ($params['admin_role_id'] as $value) {
-                    $adminRoleUser = new AdminRoleUser();
-                    $adminRoleUser->admin_role_id = $value;
-                    $adminRoleUser->admin_user_id = $params['id'];
-                    if (!$adminRoleUser->save()) {
+            if (isset($params['role_id']) && is_array($params['role_id'])) {
+                $params['role_id'] = Role::whereIn('id', $params['role_id'])->pluck('id')->toArray();
+                foreach ($params['role_id'] as $value) {
+                    $roleUser = new RoleUser();
+                    $roleUser->role_id = $value;
+                    $roleUser->admin_id = $params['id'];
+                    if (!$roleUser->save()) {
                         throw new \Exception('修改失败');
                     }
                 }
             }
             // 关联权限入库
-            if (isset($params['admin_permission_id']) && is_array($params['admin_permission_id'])) {
-                $params['admin_permission_id'] = AdminPermission::whereIn('id', $params['admin_permission_id'])->pluck('id')->toArray();
-                foreach ($params['admin_permission_id'] as $value) {
-                    $adminUserPermission = new AdminUserPermission();
-                    $adminUserPermission->admin_user_id = $params['id'];
-                    $adminUserPermission->admin_permission_id = $value;
-                    if (!$adminUserPermission->save()) {
+            if (isset($params['permission_id']) && is_array($params['permission_id'])) {
+                $params['permission_id'] = Permission::whereIn('id', $params['permission_id'])->pluck('id')->toArray();
+                foreach ($params['permission_id'] as $value) {
+                    $adminPermission = new AdminPermission();
+                    $adminPermission->admin_id = $params['id'];
+                    $adminPermission->permission_id = $value;
+                    if (!$adminPermission->save()) {
                         throw new \Exception('修改失败');
                     }
                 }
@@ -201,13 +201,13 @@ class AdminUser extends Authenticatable
         try {
             DB::beginTransaction();
             // 管理员删除
-            $model = AdminUser::destroy($id);
+            $model = Admin::destroy($id);
             if (!$model) {
                 throw new \Exception('删除失败');
             }
             // 删除拥有的角色，权限
-            AdminRoleUser::where('admin_user_id', $id)->delete();
-            AdminUserPermission::where('admin_user_id', $id)->delete();
+            RoleUser::where('admin_id', $id)->delete();
+            AdminPermission::where('admin_id', $id)->delete();
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();

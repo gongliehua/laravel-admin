@@ -54,8 +54,8 @@
                                             <span class="input-group-addon">性别</span>
                                             <select name="sex" id="sex" class="form-control">
                                                 <option value="">全部</option>
-                                                @foreach((new \App\Models\AdminUser())->sexLabel as $key=>$value)
-                                                    <option value="{{ $key }}" @if(@$_GET['sex'] == $key) selected @endif >{{ $value }}</option>
+                                                @foreach((new \App\Models\Admin())->sexLabel as $key=>$value)
+                                                    <option value="{{ $key }}" @if(isset($_GET['sex']) && $_GET['sex'] !== '' && $_GET['sex'] == $key) selected @endif >{{ $value }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -65,7 +65,7 @@
                                             <span class="input-group-addon">状态</span>
                                             <select name="status" id="status" class="form-control">
                                                 <option value="">全部</option>
-                                                @foreach((new \App\Models\AdminUser())->statusLabel as $key=>$value)
+                                                @foreach((new \App\Models\Admin())->statusLabel as $key=>$value)
                                                     <option value="{{ $key }}" @if(@$_GET['status'] == $key) selected @endif >{{ $value }}</option>
                                                 @endforeach
                                             </select>
@@ -73,7 +73,7 @@
                                     </div>
                                     <div class="col-lg-3 col-sm-6 col-xs-12 clearfix m5">
                                         <div class="input-group">
-                                            <a href="{{ route('admin.admin_user') }}" class="btn btn-sm btn-default"><i class="fa fa-undo"></i> 重置</a>&nbsp;
+                                            <a href="{{ route('admin.admin') }}" class="btn btn-sm btn-default"><i class="fa fa-undo"></i> 重置</a>&nbsp;
                                             <button type="submit" class="btn btn-sm btn-info"><i class="fa fa-search"></i> 提交</button>
                                         </div>
                                     </div>
@@ -164,7 +164,7 @@
                         type: 2,
                         title: '添加',
                         area: [_w, _h],
-                        content: "{{ route('admin.admin_user.create') }}"
+                        content: "{{ route('admin.admin.create') }}"
                     });
                 });
             });
@@ -184,7 +184,7 @@
                         type: 2,
                         title: '查看',
                         area: [_w, _h],
-                        content: "{{ route('admin.admin_user.show') }}?id="+id
+                        content: "{{ route('admin.admin.show') }}?id="+id
                     });
                 });
             });
@@ -204,7 +204,7 @@
                         type: 2,
                         title: '修改',
                         area: [_w, _h],
-                        content: "{{ route('admin.admin_user.update') }}?id="+id
+                        content: "{{ route('admin.admin.update') }}?id="+id
                     });
                 });
             });
@@ -216,7 +216,7 @@
                     layer.confirm('确定要删除吗？', function (index) {
                         $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
                         $.ajax({
-                            url: "{{ route('admin.admin_user.delete') }}",
+                            url: "{{ route('admin.admin.delete') }}",
                             type: "DELETE",
                             data: {id: id},
                             dataType: "json",

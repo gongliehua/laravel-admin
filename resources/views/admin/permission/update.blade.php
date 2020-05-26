@@ -18,15 +18,15 @@
                                 <select name="parent_id" id="parent_id" class="form-control select2">
                                     <option value="0">顶级权限</option>
                                     @foreach($allPermission as $value)
-                                        <option value="{{ $value['id'] }}" @if($info->parent_id == $value['id']) selected @endif >@if($value['parent_id'] == 0) ｜ @endif {{ str_repeat('－', $value['level'] * 4) }} {{ $value['name'] }}</option>
+                                        <option value="{{ $value['id'] }}" @if($info->parent_id == $value['id']) selected @endif >@if($value['parent_id'] == 0) ｜ @endif {{ str_repeat('－', $value['level'] * 4) }} {{ $value['title'] }}</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="name" class="col-sm-2 control-label"><i class="text-red">*</i> 名称</label>
+                            <label for="title" class="col-sm-2 control-label"><i class="text-red">*</i> 标题</label>
                             <div class="col-sm-9">
-                                <input type="text" name="name" value="{{ $info->name }}" class="form-control" id="name" placeholder="名称" autocomplete="off" required>
+                                <input type="text" name="title" value="{{ $info->title }}" class="form-control" id="title" placeholder="标题" autocomplete="off" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -45,7 +45,7 @@
                             <label for="" class="col-sm-2 control-label"><i class="text-red">*</i> 菜单</label>
                             <div class="col-sm-9">
                                 <select name="is_menu" class="form-control">
-                                    @foreach((new \App\Models\AdminPermission())->is_menuLabel as $key=>$value)
+                                    @foreach((new \App\Models\Permission())->is_menuLabel as $key=>$value)
                                         <option value="{{ $key }}" @if($info->is_menu == $key) selected @endif >{{ $value }}</option>
                                     @endforeach
                                 </select>
@@ -55,7 +55,7 @@
                             <label for="" class="col-sm-2 control-label"><i class="text-red">*</i> 状态</label>
                             <div class="col-sm-9">
                                 <select name="status" class="form-control">
-                                    @foreach((new \App\Models\AdminPermission())->statusLabel as $key=>$value)
+                                    @foreach((new \App\Models\Permission())->statusLabel as $key=>$value)
                                         <option value="{{ $key }}" @if($info->status == $key) selected @endif >{{ $value }}</option>
                                     @endforeach
                                 </select>

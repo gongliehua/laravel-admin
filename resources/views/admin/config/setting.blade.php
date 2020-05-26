@@ -45,20 +45,20 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $value->title }}</td>
                                             <td>
-                                                @if ($value->type == \App\Models\AdminConfig::TYPE_INPUT)
+                                                @if ($value->type == \App\Models\Config::TYPE_INPUT)
                                                     {{-- 单行文本框 --}}
                                                     <input type="text" name="value[{{ $value->id }}]" value="{{ $value->value }}" class="form-control" style="width: 400px;">
-                                                @elseif ($value->type == \App\Models\AdminConfig::TYPE_TEXT_AREA)
+                                                @elseif ($value->type == \App\Models\Config::TYPE_TEXT_AREA)
                                                     {{-- 多行文本框 --}}
                                                     <textarea name="value[{{ $value->id }}]" rows="3" class="form-control" style="width: 400px;">{{ $value->value }}</textarea>
-                                                @elseif ($value->type == \App\Models\AdminConfig::TYPE_RADIO)
+                                                @elseif ($value->type == \App\Models\Config::TYPE_RADIO)
                                                     {{-- 单选按钮 --}}
                                                     @if (strlen($value->item))
                                                         @foreach(($items = explode(',', $value->item)) as $val)
                                                             <label class="radio-inline"><input type="radio" name="value[{{ $value->id }}]" value="{{ $val }}" @if ($val == $value->value) checked @endif> {{ $val }}</label>
                                                         @endforeach
                                                     @endif
-                                                @elseif ($value->type == \App\Models\AdminConfig::TYPE_CHECKBOX)
+                                                @elseif ($value->type == \App\Models\Config::TYPE_CHECKBOX)
                                                     {{-- 复选框 --}}
                                                     @if (strlen($value->item))
                                                         @php
@@ -72,7 +72,7 @@
                                                             <label class="checkbox-inline"><input type="checkbox" name="value[{{ $value->id }}][]" value="{{ $val }}" @if (in_array($val, $values)) checked @endif> {{ $val }}</label>
                                                         @endforeach
                                                     @endif
-                                                @elseif ($value->type == \App\Models\AdminConfig::TYPE_SELECT)
+                                                @elseif ($value->type == \App\Models\Config::TYPE_SELECT)
                                                     {{-- 下拉框 --}}
                                                     @if (strlen($value->item))
                                                         <select name="value[{{ $value->id }}]" class="form-control" style="width: 120px;">

@@ -1,5 +1,43 @@
 <?php
 
+// 文件上传
+function fileUpload(&$file, $exceptSuffix = ['php'])
+{
+    // 目录处理
+    $relativePath = 'uploads/' . date('Y/m/d');
+    $uploadPath = public_path($relativePath);
+    if (!is_dir($uploadPath)) {
+        @mkdir($uploadPath, 0777, true);
+    }
+    if (!is_writeable($uploadPath)) {
+        return ['code'=>422, 'data'=>[], 'msg'=>'文件上传目录不可写'];
+    }
+    // 文件处理
+    $fileSuffix = $file->getClientOriginalExtension();
+    if (in_array($fileSuffix, $exceptSuffix)) {
+        return ['code'=>422, 'data'=>[], 'msg'=>'该文件后缀禁止上传'];
+    }
+    $fileName = sha1(uniqid(null, true)) . '.' . $fileSuffix;
+    $filePath = $relativePath . '/' . $fileName;
+    return $file->move($uploadPath, $fileName) ? ['code'=>200, 'data'=>$filePath, 'msg'=>'文件上传成功'] : ['code'=>422, 'data'=>[], 'msg'=>'文件上传失败'];
+}
+
+// curl函数
+function curlPost($url, $data = []) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    if ($data) {
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    }
+    $result = curl_exec($ch);
+    curl_close($ch);
+    return $result;
+}
+
 // 后台权限信息
 function getAdminAuth()
 {
@@ -26,28 +64,6 @@ function checkPermission($slug)
         }
     }
     return true;
-}
-
-// 文件上传
-function fileUpload(&$file, $exceptSuffix = ['php'])
-{
-    // 目录处理
-    $relativePath = 'uploads/' . date('Y/m/d');
-    $uploadPath = public_path($relativePath);
-    if (!is_dir($uploadPath)) {
-        @mkdir($uploadPath, 0777, true);
-    }
-    if (!is_writeable($uploadPath)) {
-        return ['code'=>422, 'data'=>[], 'msg'=>'文件上传目录不可写'];
-    }
-    // 文件处理
-    $fileSuffix = $file->getClientOriginalExtension();
-    if (in_array($fileSuffix, $exceptSuffix)) {
-        return ['code'=>422, 'data'=>[], 'msg'=>'该文件后缀禁止上传'];
-    }
-    $fileName = sha1(uniqid(null, true)) . '.' . $fileSuffix;
-    $filePath = $relativePath . '/' . $fileName;
-    return $file->move($uploadPath, $fileName) ? ['code'=>200, 'data'=>$filePath, 'msg'=>'文件上传成功'] : ['code'=>422, 'data'=>[], 'msg'=>'文件上传失败'];
 }
 
 // 无限级数组排序
@@ -87,9 +103,9 @@ function toMenuHtml($data = [])
     $result = '';
     foreach ($data as $key=>$value) {
         if (empty($value['child'])) {
-            $aTag  = '<a href="'. @route($value['slug']) .'"><i class="menu-icon fa '. $value['icon'] .'"></i><span class="menu-text">'. $value['name'] .'</span></a><b class="arrow"></b>';
+            $aTag  = '<a href="'. @route($value['slug']) .'"><i class="menu-icon fa '. $value['icon'] .'"></i><span class="menu-text">'. $value['title'] .'</span></a><b class="arrow"></b>';
         } else {
-            $aTag  = '<a href="'. @route($value['slug']) .'" class="dropdown-toggle"><i class="menu-icon fa '. $value['icon'] .'"></i><span class="menu-text">'. $value['name'] .'</span><b class="arrow fa fa-angle-down"></b></a><b class="arrow"></b>';
+            $aTag  = '<a href="'. @route($value['slug']) .'" class="dropdown-toggle"><i class="menu-icon fa '. $value['icon'] .'"></i><span class="menu-text">'. $value['title'] .'</span><b class="arrow fa fa-angle-down"></b></a><b class="arrow"></b>';
         }
         $result .= '<li class="">'.$aTag;
         if (!empty($value['child'])) {
@@ -113,28 +129,12 @@ function getParents($data = [], $id)
     return $result;
 }
 
-// curl函数
-function curlPost($url, $data = []) {
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-    if ($data) {
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-    }
-    $result = curl_exec($ch);
-    curl_close($ch);
-    return $result;
-}
-
 // 所有权限
 function allPermission()
 {
     static $data = null;
     if ($data === null) {
-        $data = \App\Models\AdminPermission::orderBy('sort', 'ASC')->get()->toArray();
+        $data = \App\Models\Permission::orderBy('sort', 'ASC')->get()->toArray();
         $data = arraySort($data);
         arraySort([], 0, 0, true);
     }

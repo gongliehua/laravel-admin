@@ -2,9 +2,8 @@
 
 namespace App\Validate;
 
-use App\Models\AdminPermission;
+use App\Models\Permission;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 
 // 权限
 class PermissionValidate
@@ -12,9 +11,9 @@ class PermissionValidate
     // 添加
     public static function add($params)
     {
-        $model = (new AdminPermission());
+        $model = (new Permission());
         $rules = [
-            'name'=>'required|string|max:20',
+            'title'=>'required|string|max:30',
             'slug'=>'present|nullable|string|max:200',
             'icon'=>'present|nullable|string|max:200',
             'is_menu'=>'required|in:' . implode(',', array_keys($model->is_menuLabel)),
@@ -25,7 +24,7 @@ class PermissionValidate
                 'required',
                 function($attribute,$value,$fail) {
                     if ($value != 0) {
-                        $permission = AdminPermission::where('id', $value)->value('id');
+                        $permission = Permission::where('id', $value)->value('id');
                         if (!$permission) {
                             return $fail('上级权限不存在，请刷新页面后重试！');
                         }
@@ -35,7 +34,7 @@ class PermissionValidate
         ];
         $messages = [];
         $customAttributes = [
-            'name'=>'名称',
+            'title'=>'标题',
             'slug'=>'标识',
             'icon'=>'图标',
             'is_menu'=>'菜单',
@@ -55,7 +54,7 @@ class PermissionValidate
     public static function edit($params)
     {
         // 基本信息
-        $permission = AdminPermission::find(@$params['id']);
+        $permission = Permission::find(@$params['id']);
         if (!$permission) {
             return ['code'=>422, 'data'=>[], 'msg'=>'该信息未找到，建议刷新页面后重试！'];
         }
@@ -66,10 +65,10 @@ class PermissionValidate
             return ['code'=>422, 'data'=>[], 'msg'=>'上级权限，不能是自己或子权限！'];
         }
 
-        $model = (new AdminPermission());
+        $model = (new Permission());
         $rules = [
             'id'=>'required',
-            'name'=>'required|string|max:20',
+            'title'=>'required|string|max:30',
             'slug'=>'present|nullable|string|max:200',
             'icon'=>'present|nullable|string|max:200',
             'is_menu'=>'required|in:' . implode(',', array_keys($model->is_menuLabel)),
@@ -80,7 +79,7 @@ class PermissionValidate
                 'required',
                 function($attribute,$value,$fail) {
                     if ($value != 0) {
-                        $permission = AdminPermission::where('id', $value)->value('id');
+                        $permission = Permission::where('id', $value)->value('id');
                         if (!$permission) {
                             return $fail('上级权限不存在，请刷新页面后重试！');
                         }
@@ -93,7 +92,7 @@ class PermissionValidate
         ];
         $customAttributes = [
             'id'=>'ID',
-            'name'=>'名称',
+            'title'=>'标题',
             'slug'=>'标识',
             'icon'=>'图标',
             'is_menu'=>'菜单',

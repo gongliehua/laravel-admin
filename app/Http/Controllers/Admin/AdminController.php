@@ -2,24 +2,22 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\AdminRole;
-use App\Models\AdminRolePermission;
-use App\Models\AdminRoleUser;
-use App\Models\AdminUser;
-use App\Models\AdminUserPermission;
-use App\Validate\AdminUserValidate;
-use App\Validate\RoleValidate;
+use App\Models\Role;
+use App\Models\RoleUser;
+use App\Models\Admin;
+use App\Models\AdminPermission;
+use App\Validate\AdminValidate;
 use Illuminate\Http\Request;
 
 // 管理员
-class AdminUserController extends BaseController
+class AdminController extends BaseController
 {
     // 列表
     public function index(Request $request)
     {
         $params = $request->all();
-        $result = (new AdminUser())->search($params);
-        return view('admin.adminUser.index', compact('result'));
+        $result = (new Admin())->search($params);
+        return view('admin.admin.index', compact('result'));
     }
 
     // 添加
@@ -28,7 +26,7 @@ class AdminUserController extends BaseController
         $params = $request->all();
         if ($request->isMethod('post')) {
             // 数据过滤
-            $validate = AdminUserValidate::add($params);
+            $validate = AdminValidate::add($params);
             if ($validate['code'] != 200) {
                 return response()->json($validate);
             }
@@ -50,26 +48,26 @@ class AdminUserController extends BaseController
                 $params['avatar'] = null;
             }
             // 数据操作
-            $model = (new AdminUser())->add($params);
+            $model = (new Admin())->add($params);
             return response()->json($model);
         }
-        $allRole = AdminRole::all();
+        $allRole = Role::all();
         $allPermission = allPermission();
-        return view('admin.adminUser.create', compact('allRole', 'allPermission'));
+        return view('admin.admin.create', compact('allRole', 'allPermission'));
     }
 
     // 查看
     public function show(Request $request)
     {
-        $info = AdminUser::find($request->input('id'));
+        $info = Admin::find($request->input('id'));
         if (!$info) {
             abort(422, '该信息未找到，建议刷新页面后重试！');
         }
-        $adminRoleId = AdminRoleUser::where('admin_user_id', $info->id)->pluck('admin_role_id')->toArray();
-        $adminPermissionId = AdminUserPermission::where('admin_user_id', $info->id)->pluck('admin_permission_id')->toArray();
-        $allRole = AdminRole::all();
+        $roleId = RoleUser::where('admin_id', $info->id)->pluck('role_id')->toArray();
+        $permissionId = AdminPermission::where('admin_id', $info->id)->pluck('permission_id')->toArray();
+        $allRole = Role::all();
         $allPermission = allPermission();
-        return view('admin.adminUser.show', compact('info', 'adminRoleId', 'adminPermissionId', 'allRole', 'allPermission'));
+        return view('admin.admin.show', compact('info', 'roleId', 'permissionId', 'allRole', 'allPermission'));
     }
 
     // 修改
@@ -78,7 +76,7 @@ class AdminUserController extends BaseController
         $params = $request->all();
         if ($request->isMethod('put')) {
             // 数据过滤
-            $validate = AdminUserValidate::edit($params);
+            $validate = AdminValidate::edit($params);
             if ($validate['code'] != 200) {
                 return response()->json($validate);
             }
@@ -103,21 +101,21 @@ class AdminUserController extends BaseController
             }
             // 默认管理员不受状态限制
             if ($params['id'] == 1) {
-                $params['status'] = AdminUser::STATUS_NORMAL;
+                $params['status'] = Admin::STATUS_NORMAL;
             }
             // 数据操作
-            $model = (new AdminUser())->edit($params);
+            $model = (new Admin())->edit($params);
             return response()->json($model);
         }
-        $info = AdminUser::find($request->input('id'));
+        $info = Admin::find($request->input('id'));
         if (!$info) {
             abort(422, '该信息未找到，建议刷新页面后重试！');
         }
-        $adminRoleId = AdminRoleUser::where('admin_user_id', $info->id)->pluck('admin_role_id')->toArray();
-        $adminPermissionId = AdminUserPermission::where('admin_user_id', $info->id)->pluck('admin_permission_id')->toArray();
-        $allRole = AdminRole::all();
+        $roleId = RoleUser::where('admin_id', $info->id)->pluck('role_id')->toArray();
+        $permissionId = AdminPermission::where('admin_id', $info->id)->pluck('permission_id')->toArray();
+        $allRole = Role::all();
         $allPermission = allPermission();
-        return view('admin.adminUser.update', compact('info', 'adminRoleId', 'adminPermissionId', 'allRole', 'allPermission'));
+        return view('admin.admin.update', compact('info', 'roleId', 'permissionId', 'allRole', 'allPermission'));
     }
 
     // 删除
@@ -125,12 +123,12 @@ class AdminUserController extends BaseController
     {
         $params = $request->all();
         // 数据过滤
-        $validate = AdminUserValidate::del($params);
+        $validate = AdminValidate::del($params);
         if ($validate['code'] != 200) {
             return response()->json($validate);
         }
         // 数据操作
-        $model = (new AdminUser())->del($params['id']);
+        $model = (new Admin())->del($params['id']);
         return response()->json($model);
     }
 }

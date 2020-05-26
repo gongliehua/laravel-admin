@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
 // 角色
-class AdminRole extends BaseModel
+class Role extends BaseModel
 {
     // 软删除
     use SoftDeletes;
@@ -25,15 +25,15 @@ class AdminRole extends BaseModel
     }
 
     // 获取权限
-    public function adminPermission()
+    public function permission()
     {
-        return $this->belongsToMany('App\Models\AdminPermission', 'admin_role_permissions');
+        return $this->belongsToMany('App\Models\Permission', 'role_permissions');
     }
 
     // 列表
     public function search($params)
     {
-        $query = new AdminRole();
+        $query = new Role();
         if (isset($params['name']) && $params['name'] !== '') {
             $query = $query->where('name', 'like', '%' . $params['name'] . '%');
         }
@@ -50,7 +50,7 @@ class AdminRole extends BaseModel
         try {
             DB::beginTransaction();
             // 角色入库
-            $model = new AdminRole();
+            $model = new Role();
             $model->name = $params['name'];
             $model->status = $params['status'];
             $model->remark = $params['remark'];
@@ -58,13 +58,13 @@ class AdminRole extends BaseModel
                 throw new \Exception('添加失败');
             }
             // 权限入库
-            if (isset($params['admin_permission_id']) && is_array($params['admin_permission_id'])) {
-                $params['admin_permission_id'] = AdminPermission::whereIn('id', $params['admin_permission_id'])->pluck('id')->toArray();
-                foreach ($params['admin_permission_id'] as $value) {
-                    $adminRolePermission = new AdminRolePermission();
-                    $adminRolePermission->admin_role_id = $model->id;
-                    $adminRolePermission->admin_permission_id = $value;
-                    if (!$adminRolePermission->save()) {
+            if (isset($params['permission_id']) && is_array($params['permission_id'])) {
+                $params['permission_id'] = Permission::whereIn('id', $params['permission_id'])->pluck('id')->toArray();
+                foreach ($params['permission_id'] as $value) {
+                    $rolePermission = new RolePermission();
+                    $rolePermission->role_id = $model->id;
+                    $rolePermission->permission_id = $value;
+                    if (!$rolePermission->save()) {
                         throw new \Exception('添加失败');
                     }
                 }
@@ -83,7 +83,7 @@ class AdminRole extends BaseModel
         try {
             DB::beginTransaction();
             // 角色入库
-            $model = AdminRole::find($params['id']);
+            $model = Role::find($params['id']);
             $model->name = $params['name'];
             $model->status = $params['status'];
             $model->remark = $params['remark'];
@@ -91,14 +91,14 @@ class AdminRole extends BaseModel
                 throw new \Exception('修改失败');
             }
             // 权限入库
-            AdminRolePermission::where('admin_role_id', $params['id'])->delete();
-            if (isset($params['admin_permission_id']) && is_array($params['admin_permission_id'])) {
-                $params['admin_permission_id'] = AdminPermission::whereIn('id', $params['admin_permission_id'])->pluck('id')->toArray();
-                foreach ($params['admin_permission_id'] as $value) {
-                    $adminRolePermission = new AdminRolePermission();
-                    $adminRolePermission->admin_role_id = $model->id;
-                    $adminRolePermission->admin_permission_id = $value;
-                    if (!$adminRolePermission->save()) {
+            RolePermission::where('role_id', $params['id'])->delete();
+            if (isset($params['permission_id']) && is_array($params['permission_id'])) {
+                $params['permission_id'] = Permission::whereIn('id', $params['permission_id'])->pluck('id')->toArray();
+                foreach ($params['permission_id'] as $value) {
+                    $rolePermission = new RolePermission();
+                    $rolePermission->role_id = $model->id;
+                    $rolePermission->permission_id = $value;
+                    if (!$rolePermission->save()) {
                         throw new \Exception('修改失败');
                     }
                 }
@@ -114,9 +114,9 @@ class AdminRole extends BaseModel
     // 删除
     public function del($id)
     {
-        AdminRole::destroy($id);
-        AdminRoleUser::where('admin_role_id', $id)->delete();
-        AdminRolePermission::where('admin_role_id', $id)->delete();
+        Role::destroy($id);
+        RoleUser::where('role_id', $id)->delete();
+        RolePermission::where('role_id', $id)->delete();
         return ['code'=>200, 'data'=>[], 'msg'=>'删除成功'];
     }
 }

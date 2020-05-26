@@ -22,7 +22,7 @@
                             <label for="" class="col-sm-2 control-label"><i class="text-red">*</i> 状态</label>
                             <div class="col-sm-9">
                                 <select name="status" class="form-control">
-                                    @foreach((new \App\Models\AdminRole())->statusLabel as $key=>$value)
+                                    @foreach((new \App\Models\Role())->statusLabel as $key=>$value)
                                         <option value="{{ $key }}" @if($info->status == $key) selected @endif >{{ $value }}</option>
                                     @endforeach
                                 </select>
@@ -41,7 +41,7 @@
                                     @foreach ($allPermission as $key=>$value)
                                         <div class="checkbox">
                                             <label>
-                                                <input type="checkbox" name="admin_permission_id[]" value="{{ $value['id'] }}" data-id="{{ $value['id'] }}" data-parentid="{{ $value['parent_id'] }}" @if(in_array($value['id'], $adminPermissionId)) checked @endif >@if($value['parent_id'] === 0) ｜ @endif {{ str_repeat('－', $value['level'] * 4) }} {{ $value['name'] }}
+                                                <input type="checkbox" name="permission_id[]" value="{{ $value['id'] }}" data-id="{{ $value['id'] }}" data-parentid="{{ $value['parent_id'] }}" @if(in_array($value['id'], $permissionId)) checked @endif >@if($value['parent_id'] === 0) ｜ @endif {{ str_repeat('－', $value['level'] * 4) }} {{ $value['title'] }}
                                             </label>
                                         </div>
                                     @endforeach

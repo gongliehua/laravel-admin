@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\AdminPermission;
+use App\Models\Permission;
 use App\Validate\PermissionValidate;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -16,7 +16,7 @@ class PermissionController extends BaseController
         // 排序
         if ($request->isMethod('put')) {
             $sort = $request->input('sort');
-            (new AdminPermission)->sort($sort);
+            (new Permission)->sort($sort);
             return ['code'=>200, 'data'=>[], 'msg'=>'排序成功'];
         }
 
@@ -43,7 +43,7 @@ class PermissionController extends BaseController
                 return response()->json($validate);
             }
             // 数据操作
-            $model = (new AdminPermission())->add($params);
+            $model = (new Permission())->add($params);
             return response()->json($model);
         }
         $allPermission = allPermission();
@@ -53,7 +53,7 @@ class PermissionController extends BaseController
     // 查看
     public function show(Request $request)
     {
-        $info = AdminPermission::find($request->input('id'));
+        $info = Permission::find($request->input('id'));
         if (!$info) {
             abort(422, '该信息未找到，建议刷新页面后重试！');
         }
@@ -72,10 +72,10 @@ class PermissionController extends BaseController
                 return response()->json($validate);
             }
             // 数据操作
-            $model = (new AdminPermission())->edit($params);
+            $model = (new Permission())->edit($params);
             return response()->json($model);
         }
-        $info = AdminPermission::find($request->input('id'));
+        $info = Permission::find($request->input('id'));
         if (!$info) {
             abort(422, '该信息未找到，建议刷新页面后重试！');
         }
@@ -86,7 +86,7 @@ class PermissionController extends BaseController
     // 删除
     public function delete(Request $request)
     {
-        $result = (new AdminPermission())->del($request->input('id'));
+        $result = (new Permission())->del($request->input('id'));
         return response()->json($result);
     }
 }

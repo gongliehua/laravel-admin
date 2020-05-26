@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\AdminConfig;
+use App\Models\Config;
 use App\Validate\ConfigValidate;
 use Illuminate\Http\Request;
 
@@ -14,10 +14,10 @@ class ConfigController extends BaseController
     {
         $params = $request->input('value');
         if ($request->isMethod('put')) {
-            (new AdminConfig())->setting($params);
+            (new Config())->setting($params);
             return response()->json(['code'=>200, 'data'=>[], 'msg'=>'修改成功']);
         }
-        $result = AdminConfig::orderBy('sort', 'ASC')->get();
+        $result = Config::orderBy('sort', 'ASC')->get();
         return view('admin.config.setting', compact('result'));
     }
 
@@ -27,10 +27,10 @@ class ConfigController extends BaseController
         // 排序
         if ($request->isMethod('put')) {
             $sort = $request->input('sort');
-            (new AdminConfig())->sort($sort);
+            (new Config())->sort($sort);
             return ['code'=>200, 'data'=>[], 'msg'=>'排序成功'];
         }
-        $result = AdminConfig::orderBy('sort', 'ASC')->paginate();
+        $result = Config::orderBy('sort', 'ASC')->paginate();
         return view('admin.config.index', compact('result'));
     }
 
@@ -45,7 +45,7 @@ class ConfigController extends BaseController
                 return response()->json($validate);
             }
             // 数据操作
-            $model = (new AdminConfig())->add($params);
+            $model = (new Config())->add($params);
             return response()->json($model);
         }
         return view('admin.config.create');
@@ -62,10 +62,10 @@ class ConfigController extends BaseController
                 return response()->json($validate);
             }
             // 数据操作
-            $model = (new AdminConfig())->edit($params);
+            $model = (new Config())->edit($params);
             return response()->json($model);
         }
-        $info = AdminConfig::find($request->input('id'));
+        $info = Config::find($request->input('id'));
         if (!$info) {
             abort(422, '该信息未找到，建议刷新页面后重试！');
         }
@@ -75,7 +75,7 @@ class ConfigController extends BaseController
     // 删除
     public function delete(Request $request)
     {
-        $info = AdminConfig::destroy($request->input('id'));
+        $info = Config::destroy($request->input('id'));
         return $info ? ['code'=>200, 'data'=>[], 'msg'=>'删除成功'] : ['code'=>400, 'data'=>[], 'msg'=>'删除失败'];
     }
 }

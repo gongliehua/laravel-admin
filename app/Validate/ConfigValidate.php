@@ -2,7 +2,7 @@
 
 namespace App\Validate;
 
-use App\Models\AdminConfig;
+use App\Models\Config;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -13,12 +13,12 @@ class ConfigValidate
     public static function add($params)
     {
         $rules = [
-            'title'=>'required|string|max:20',
-            'variable'=>['required', 'alpha', 'max:20', Rule::unique('admin_configs')->where(function ($query) {
+            'title'=>'required|string|max:30',
+            'variable'=>['required', 'alpha', 'max:20', Rule::unique('configs')->where(function ($query) {
                     $query->whereNull('deleted_at');
                 }),
             ],
-            'type'=>'required|in:' . implode(',', array_keys((new AdminConfig())->typeLabel)),
+            'type'=>'required|in:' . implode(',', array_keys((new Config())->typeLabel)),
             'item'=>'present',
             'value'=>'present',
             'sort'=>'present|nullable|integer',
@@ -43,15 +43,15 @@ class ConfigValidate
     public static function edit($params)
     {
         $rules = [
-            'id'=>['required', Rule::exists('admin_configs')->where(function ($query) {
+            'id'=>['required', Rule::exists('configs')->where(function ($query) {
                 $query->whereNull('deleted_at');
             })],
-            'title'=>'required|string|max:20',
-            'variable'=>['required', 'alpha', 'max:20', Rule::unique('admin_configs')->where(function ($query) use ($params) {
+            'title'=>'required|string|max:30',
+            'variable'=>['required', 'alpha', 'max:20', Rule::unique('configs')->where(function ($query) use ($params) {
                 $query->whereNull('deleted_at')->where('id', '!=', @$params['id']);
             }),
             ],
-            'type'=>'required|in:' . implode(',', array_keys((new AdminConfig())->typeLabel)),
+            'type'=>'required|in:' . implode(',', array_keys((new Config())->typeLabel)),
             'item'=>'present',
             'value'=>'present',
             'sort'=>'required|integer',

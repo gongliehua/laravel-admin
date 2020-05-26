@@ -20,11 +20,11 @@ Route::group(['prefix'=>config('admin.routePrefix'), 'namespace'=>'Admin', 'midd
     Route::any('login', 'IndexController@login')->name('admin.login');          //后台登录
     Route::any('logout', 'IndexController@logout')->name('admin.logout');       //退出登录
 
-    Route::any('admin_user', 'AdminUserController@index')->name('admin.admin_user');                //用户管理
-    Route::any('admin_user/create', 'AdminUserController@create')->name('admin.admin_user.create'); //用户添加
-    Route::any('admin_user/show', 'AdminUserController@show')->name('admin.admin_user.show');       //用户查看
-    Route::any('admin_user/update', 'AdminUserController@update')->name('admin.admin_user.update'); //用于修改
-    Route::any('admin_user/delete', 'AdminUserController@delete')->name('admin.admin_user.delete'); //用户删除
+    Route::any('admin', 'AdminController@index')->name('admin.admin');                  //用户管理
+    Route::any('admin/create', 'AdminController@create')->name('admin.admin.create');   //用户添加
+    Route::any('admin/show', 'AdminController@show')->name('admin.admin.show');         //用户查看
+    Route::any('admin/update', 'AdminController@update')->name('admin.admin.update');   //用户修改
+    Route::any('admin/delete', 'AdminController@delete')->name('admin.admin.delete');   //用户删除
 
     Route::any('role', 'RoleController@index')->name('admin.role');                 //角色管理
     Route::any('role/create', 'RoleController@create')->name('admin.role.create');  //角色添加

@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\AdminUser;
+use App\Models\Admin as AdminModel;
 use Closure;
 use Illuminate\Support\Facades\Route;
 
@@ -22,7 +22,7 @@ class Admin
         // 登录状态(默认管理员是不受状态、权限限制的) || 未登陆状态
         if (getAdminAuth()->check()) {
             $isDefaultAdmin = getAdminAuth()->id() == 1 ? true : false;
-            if (!$isDefaultAdmin && getAdminAuth()->user()->status == AdminUser::STATUS_INVALID) {
+            if (!$isDefaultAdmin && getAdminAuth()->user()->status == AdminModel::STATUS_INVALID) {
                 getAdminAuth()->logout();
                 return $request->ajax() ? response()->json(['code'=>401, 'data'=>[], 'msg'=>'您的账号已被禁用']) : redirect()->route('admin.login');
             }

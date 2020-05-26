@@ -2,12 +2,12 @@
 
 namespace App\Validate;
 
-use App\Models\AdminUser;
+use App\Models\Admin;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 // 管理员
-class AdminUserValidate
+class AdminValidate
 {
     // 后台登录
     public static function login($params)
@@ -33,7 +33,7 @@ class AdminUserValidate
     {
         $admin = getAdminAuth()->user();
         $rules = [
-            'username'=>['required', 'alpha_num', 'between:3,20', Rule::unique('admin_users')->where(function ($query) use ($admin) {
+            'username'=>['required', 'alpha_num', 'between:3,20', Rule::unique('admins')->where(function ($query) use ($admin) {
                 $query->whereNull('deleted_at')->where('id', '!=', $admin->id);
             })],
             'password'=>'present|nullable|alpha_dash|between:6,20|confirmed',
@@ -63,9 +63,9 @@ class AdminUserValidate
     // 添加
     public static function add($params)
     {
-        $model = (new AdminUser());
+        $model = (new Admin());
         $rules = [
-            'username'=>['required', 'alpha_num', 'between:3,20', Rule::unique('admin_users')->where(function ($query) {
+            'username'=>['required', 'alpha_num', 'between:3,20', Rule::unique('admins')->where(function ($query) {
                 $query->whereNull('deleted_at');
             })],
             'password'=>'present|nullable|alpha_dash|between:6,20|confirmed',
@@ -74,8 +74,8 @@ class AdminUserValidate
             'avatar'=>'image',
             'email'=>'present|nullable|email|max:200',
             'status'=>'required|in:' . implode(',', array_keys($model->statusLabel)),
-            'admin_role_id'=>'nullable|array',
-            'admin_permission_id'=>'nullable|array',
+            'role_id'=>'nullable|array',
+            'permission_id'=>'nullable|array',
         ];
         $messages = [];
         $customAttributes = [
@@ -86,8 +86,8 @@ class AdminUserValidate
             'avatar'=>'头像',
             'email'=>'电子邮箱',
             'status'=>'状态',
-            'admin_role_id'=>'角色ID',
-            'admin_permission_id'=>'权限ID',
+            'role_id'=>'角色ID',
+            'permission_id'=>'权限ID',
         ];
         $validator = Validator::make($params, $rules, $messages, $customAttributes);
         if ($validator->fails()) {
@@ -99,12 +99,12 @@ class AdminUserValidate
     // 修改
     public static function edit($params)
     {
-        $model = (new AdminUser());
+        $model = (new Admin());
         $rules = [
-            'id'=>['required', Rule::exists('admin_users')->where(function ($query) {
+            'id'=>['required', Rule::exists('admins')->where(function ($query) {
                 $query->whereNull('deleted_at');
             })],
-            'username'=>['required', 'alpha_num', 'between:3,20', Rule::unique('admin_users')->where(function ($query) use ($params) {
+            'username'=>['required', 'alpha_num', 'between:3,20', Rule::unique('admins')->where(function ($query) use ($params) {
                 $query->whereNull('deleted_at')->where('id', '!=', @$params['id']);
             })],
             'password'=>'present|nullable|alpha_dash|between:6,20|confirmed',
@@ -113,8 +113,8 @@ class AdminUserValidate
             'avatar'=>'image',
             'email'=>'present|nullable|email|max:200',
             'status'=>'required|in:' . implode(',', array_keys($model->statusLabel)),
-            'admin_role_id'=>'nullable|array',
-            'admin_permission_id'=>'nullable|array',
+            'role_id'=>'nullable|array',
+            'permission_id'=>'nullable|array',
         ];
         $messages = [];
         $customAttributes = [
@@ -126,8 +126,8 @@ class AdminUserValidate
             'avatar'=>'头像',
             'email'=>'电子邮箱',
             'status'=>'状态',
-            'admin_role_id'=>'角色ID',
-            'admin_permission_id'=>'权限ID',
+            'role_id'=>'角色ID',
+            'permission_id'=>'权限ID',
         ];
         $validator = Validator::make($params, $rules, $messages, $customAttributes);
         if ($validator->fails()) {
@@ -136,11 +136,11 @@ class AdminUserValidate
         return ['code'=>200, 'data'=>[], 'msg'=>'验证成功'];
     }
 
-    // 修改
+    // 删除
     public static function del($params)
     {
         $rules = [
-            'id'=>['required', Rule::exists('admin_users')->where(function ($query) {
+            'id'=>['required', Rule::exists('admins')->where(function ($query) {
                 $query->whereNull('deleted_at');
             }), function($attribute,$value,$fail){
                 if ($value == '1') {

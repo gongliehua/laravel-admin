@@ -33,8 +33,8 @@
                                 <form action="" method="get">
                                 <div class="col-lg-3 col-sm-6 col-xs-12 clearfix m5">
                                     <div class="input-group">
-                                        <span class="input-group-addon">名称</span>
-                                        <input type="text" name="name" class="form-control" placeholder="名称" value="{{ @$_GET['name'] }}">
+                                        <span class="input-group-addon">标题</span>
+                                        <input type="text" name="title" class="form-control" placeholder="标题" value="{{ @$_GET['title'] }}">
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-sm-6 col-xs-12 clearfix m5">
@@ -79,7 +79,7 @@
                             <table class="table table-bordered">
                                 <tr>
                                     <th>#</th>
-                                    <th>名称</th>
+                                    <th>标题</th>
                                     <th>类型</th>
                                     <th>路径</th>
                                     <th>操作用户</th>
@@ -89,10 +89,10 @@
                                     @foreach($result as $key=>$value)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $value->name }}</td>
+                                            <td>{{ $value->title }}</td>
                                             <td>{{ $value->method }}</td>
                                             <td>{{ $value->path }}</td>
-                                            <td>{{ $value->adminUser->username }}</td>
+                                            <td>{{ $value->admin->username }}</td>
                                             <td>
                                                 <a href="javascript:show({{ $value->id }});" class="btn btn-xs btn-info" title="查看"><i class="fa fa-eye"></i></a>
                                             </td>

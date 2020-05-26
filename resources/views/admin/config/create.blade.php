@@ -27,7 +27,7 @@
                             <label for="" class="col-sm-2 control-label"><i class="text-red">*</i> 类型</label>
                             <div class="col-sm-9">
                                 <select name="type" class="form-control">
-                                    @foreach((new \App\Models\AdminConfig())->typeLabel as $key=>$value)
+                                    @foreach((new \App\Models\Config())->typeLabel as $key=>$value)
                                         <option value="{{ $key }}">{{ $value }}</option>
                                     @endforeach
                                 </select>

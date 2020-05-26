@@ -2,8 +2,7 @@
 
 namespace App\Validate;
 
-use App\Models\AdminPermission;
-use App\Models\AdminRole;
+use App\Models\Role;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -13,19 +12,19 @@ class RoleValidate
     // 添加
     public static function add($params)
     {
-        $model = (new AdminRole());
+        $model = (new Role());
         $rules = [
-            'name'=>'required|string|max:20',
+            'name'=>'required|string|max:30',
             'status'=>'required|in:' . implode(',', array_keys($model->statusLabel)),
             'remark'=>'present|nullable|string|max:200',
-            'admin_permission_id'=>'nullable|array',
+            'permission_id'=>'nullable|array',
         ];
         $messages = [];
         $customAttributes = [
             'name'=>'名称',
             'status'=>'状态',
             'remark'=>'备注',
-            'admin_permission_id'=>'权限ID',
+            'permission_id'=>'权限ID',
         ];
         $validator = Validator::make($params, $rules, $messages, $customAttributes);
         if ($validator->fails()) {
@@ -37,15 +36,15 @@ class RoleValidate
     // 修改
     public static function edit($params)
     {
-        $model = (new AdminRole());
+        $model = (new Role());
         $rules = [
-            'id'=>['required', Rule::exists('admin_roles')->where(function($query){
+            'id'=>['required', Rule::exists('roles')->where(function($query){
                 $query->whereNull('deleted_at');
             })],
-            'name'=>'required|string|max:20',
+            'name'=>'required|string|max:30',
             'status'=>'required|in:' . implode(',', array_keys($model->statusLabel)),
             'remark'=>'present|nullable|string|max:200',
-            'admin_permission_id'=>'nullable|array',
+            'permission_id'=>'nullable|array',
         ];
         $messages = [];
         $customAttributes = [
@@ -53,7 +52,7 @@ class RoleValidate
             'name'=>'名称',
             'status'=>'状态',
             'remark'=>'备注',
-            'admin_permission_id'=>'权限ID',
+            'permission_id'=>'权限ID',
         ];
         $validator = Validator::make($params, $rules, $messages, $customAttributes);
         if ($validator->fails()) {
@@ -66,7 +65,7 @@ class RoleValidate
     public static function del($params)
     {
         $rules = [
-            'id'=>['required', Rule::exists('admin_roles')->where(function($query){
+            'id'=>['required', Rule::exists('roles')->where(function($query){
                 $query->whereNull('deleted_at');
             })],
         ];

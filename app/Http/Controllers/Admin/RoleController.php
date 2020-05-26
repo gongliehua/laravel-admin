@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\AdminRole;
-use App\Models\AdminRolePermission;
+use App\Models\Role;
+use App\Models\RolePermission;
 use App\Validate\RoleValidate;
 use Illuminate\Http\Request;
 
@@ -14,7 +14,7 @@ class RoleController extends BaseController
     public function index(Request $request)
     {
         $params = $request->all();
-        $result = (new AdminRole())->search($params);
+        $result = (new Role())->search($params);
         return view('admin.role.index', compact('result'));
     }
 
@@ -29,7 +29,7 @@ class RoleController extends BaseController
                 return response()->json($validate);
             }
             // 数据操作
-            $model = (new AdminRole())->add($params);
+            $model = (new Role())->add($params);
             return response()->json($model);
         }
         $allPermission = allPermission();
@@ -39,13 +39,13 @@ class RoleController extends BaseController
     // 查看
     public function show(Request $request)
     {
-        $info = AdminRole::find($request->input('id'));
+        $info = Role::find($request->input('id'));
         if (!$info) {
             abort(422, '该信息未找到，建议刷新页面后重试！');
         }
-        $adminPermissionId = AdminRolePermission::where('admin_role_id', $info->id)->pluck('admin_permission_id')->toArray();
+        $permissionId = RolePermission::where('role_id', $info->id)->pluck('permission_id')->toArray();
         $allPermission = allPermission();
-        return view('admin.role.show', compact('info', 'allPermission', 'adminPermissionId'));
+        return view('admin.role.show', compact('info', 'allPermission', 'permissionId'));
     }
 
     // 修改
@@ -59,16 +59,16 @@ class RoleController extends BaseController
                 return response()->json($validate);
             }
             // 数据操作
-            $model = (new AdminRole())->edit($params);
+            $model = (new Role())->edit($params);
             return response()->json($model);
         }
-        $info = AdminRole::with(['adminPermission'])->find($request->input('id'));
+        $info = Role::find($request->input('id'));
         if (!$info) {
             abort(422, '该信息未找到，建议刷新页面后重试！');
         }
-        $adminPermissionId = AdminRolePermission::where('admin_role_id', $info->id)->pluck('admin_permission_id')->toArray();
+        $permissionId = RolePermission::where('role_id', $info->id)->pluck('permission_id')->toArray();
         $allPermission = allPermission();
-        return view('admin.role.update', compact('info', 'allPermission', 'adminPermissionId'));
+        return view('admin.role.update', compact('info', 'allPermission', 'permissionId'));
     }
 
     // 删除
@@ -81,7 +81,7 @@ class RoleController extends BaseController
             return response()->json($validate);
         }
         // 数据操作
-        $model = (new AdminRole())->del($params['id']);
+        $model = (new Role())->del($params['id']);
         return response()->json($model);
     }
 }
