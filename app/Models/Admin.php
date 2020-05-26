@@ -41,7 +41,7 @@ class Admin extends Authenticatable
     // 获取关联的角色
     public function role()
     {
-        return $this->belongsToMany('App\Models\Role', 'role_users');
+        return $this->belongsToMany('App\Models\Role', 'role_admins');
     }
 
     // 获取管理员直接拥有的权限
@@ -121,10 +121,10 @@ class Admin extends Authenticatable
             if (isset($params['role_id']) && is_array($params['role_id'])) {
                 $params['role_id'] = Role::whereIn('id', $params['role_id'])->pluck('id')->toArray();
                 foreach ($params['role_id'] as $value) {
-                    $roleUser = new RoleUser();
-                    $roleUser->role_id = $value;
-                    $roleUser->admin_id = $model->id;
-                    if (!$roleUser->save()) {
+                    $roleAdmin = new RoleAdmin();
+                    $roleAdmin->role_id = $value;
+                    $roleAdmin->admin_id = $model->id;
+                    if (!$roleAdmin->save()) {
                         throw new \Exception('添加失败');
                     }
                 }
@@ -161,16 +161,16 @@ class Admin extends Authenticatable
                 throw new \Exception('修改失败');
             }
             // 删除拥有过的角色，权限
-            RoleUser::where('admin_id', $params['id'])->delete();
+            RoleAdmin::where('admin_id', $params['id'])->delete();
             AdminPermission::where('admin_id', $params['id'])->delete();
             // 关联角色入库
             if (isset($params['role_id']) && is_array($params['role_id'])) {
                 $params['role_id'] = Role::whereIn('id', $params['role_id'])->pluck('id')->toArray();
                 foreach ($params['role_id'] as $value) {
-                    $roleUser = new RoleUser();
-                    $roleUser->role_id = $value;
-                    $roleUser->admin_id = $params['id'];
-                    if (!$roleUser->save()) {
+                    $roleAdmin = new RoleAdmin();
+                    $roleAdmin->role_id = $value;
+                    $roleAdmin->admin_id = $params['id'];
+                    if (!$roleAdmin->save()) {
                         throw new \Exception('修改失败');
                     }
                 }
@@ -206,7 +206,7 @@ class Admin extends Authenticatable
                 throw new \Exception('删除失败');
             }
             // 删除拥有的角色，权限
-            RoleUser::where('admin_id', $id)->delete();
+            RoleAdmin::where('admin_id', $id)->delete();
             AdminPermission::where('admin_id', $id)->delete();
             DB::commit();
         } catch (\Exception $e) {

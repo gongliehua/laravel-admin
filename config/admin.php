@@ -55,7 +55,14 @@ return [
     |
     */
 
-    'noNeedDevelop' => ['admin.config', 'admin.config.create', 'admin.config.update', 'admin.config.delete'],
+    'noNeedDevelop' => [
+        'admin.config',
+        'admin.config.create',
+        'admin.config.update',
+        'admin.config.delete',
+        'admin.permission.create',
+        'admin.permission.delete',
+    ],
 
     /*
     |--------------------------------------------------------------------------

@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 26/05/2020 17:07:41
+ Date: 26/05/2020 18:29:39
 */
 
 SET NAMES utf8mb4;
@@ -110,6 +110,17 @@ CREATE TABLE `permissions`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '权限表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Table structure for role_admins
+-- ----------------------------
+DROP TABLE IF EXISTS `role_admins`;
+CREATE TABLE `role_admins`  (
+  `role_id` int(11) NOT NULL COMMENT '角色ID',
+  `admin_id` int(11) NOT NULL COMMENT '管理员ID',
+  `created_at` timestamp(0) NULL DEFAULT NULL,
+  `updated_at` timestamp(0) NULL DEFAULT NULL
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色和管理员的关系表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- Table structure for role_permissions
 -- ----------------------------
 DROP TABLE IF EXISTS `role_permissions`;
@@ -119,17 +130,6 @@ CREATE TABLE `role_permissions`  (
   `created_at` timestamp(0) NULL DEFAULT NULL,
   `updated_at` timestamp(0) NULL DEFAULT NULL
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色和权限的关系表' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Table structure for role_users
--- ----------------------------
-DROP TABLE IF EXISTS `role_users`;
-CREATE TABLE `role_users`  (
-  `role_id` int(11) NOT NULL COMMENT '角色ID',
-  `admin_id` int(11) NOT NULL COMMENT '管理员ID',
-  `created_at` timestamp(0) NULL DEFAULT NULL,
-  `updated_at` timestamp(0) NULL DEFAULT NULL
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色和管理员的关系表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for roles

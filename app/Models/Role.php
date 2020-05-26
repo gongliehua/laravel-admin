@@ -115,7 +115,7 @@ class Role extends BaseModel
     public function del($id)
     {
         Role::destroy($id);
-        RoleUser::where('role_id', $id)->delete();
+        RoleAdmin::where('role_id', $id)->delete();
         RolePermission::where('role_id', $id)->delete();
         return ['code'=>200, 'data'=>[], 'msg'=>'删除成功'];
     }

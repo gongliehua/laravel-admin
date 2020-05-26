@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Role;
-use App\Models\RoleUser;
+use App\Models\RoleAdmin;
 use App\Models\Admin;
 use App\Models\AdminPermission;
 use App\Validate\AdminValidate;
@@ -63,7 +63,7 @@ class AdminController extends BaseController
         if (!$info) {
             abort(422, '该信息未找到，建议刷新页面后重试！');
         }
-        $roleId = RoleUser::where('admin_id', $info->id)->pluck('role_id')->toArray();
+        $roleId = RoleAdmin::where('admin_id', $info->id)->pluck('role_id')->toArray();
         $permissionId = AdminPermission::where('admin_id', $info->id)->pluck('permission_id')->toArray();
         $allRole = Role::all();
         $allPermission = allPermission();
@@ -111,7 +111,7 @@ class AdminController extends BaseController
         if (!$info) {
             abort(422, '该信息未找到，建议刷新页面后重试！');
         }
-        $roleId = RoleUser::where('admin_id', $info->id)->pluck('role_id')->toArray();
+        $roleId = RoleAdmin::where('admin_id', $info->id)->pluck('role_id')->toArray();
         $permissionId = AdminPermission::where('admin_id', $info->id)->pluck('permission_id')->toArray();
         $allRole = Role::all();
         $allPermission = allPermission();
