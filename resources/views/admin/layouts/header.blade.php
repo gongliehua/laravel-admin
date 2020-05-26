@@ -26,5 +26,6 @@
     <!-- Google Font -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
     <style>
-        .select2-container--default .select2-selection--single {border-radius: 0;border-color: #d2d6de;height: 34px;}
+        .select2-container--default .select2-selection--single {border-radius: 0;border-color: #d2d6de;min-height: 34px;}
+        .select2-container--default .select2-selection--multiple {border-radius: 0;border-color: #d2d6de;min-height: 34px;}
     </style>

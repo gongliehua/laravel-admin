@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\DB;
 
 // 管理员
 class AdminUser extends Authenticatable
@@ -74,5 +75,144 @@ class AdminUser extends Authenticatable
             return ['code'=>422, 'data'=>[], 'msg'=>'您的账号已被禁用'];
         }
         return ['code'=>200, 'data'=>$model, 'msg'=>'验证成功'];
+    }
+
+    // 列表
+    public function search($params)
+    {
+        $query = new AdminUser();
+        if (isset($params['username']) && $params['username'] !== '') {
+            $query = $query->where('username', 'like', '%' . $params['username'] . '%');
+        }
+        if (isset($params['name']) && $params['name'] !== '') {
+            $query = $query->where('name', 'like', '%' . $params['name'] . '%');
+        }
+        if (isset($params['sex']) && $params['sex'] !== '') {
+            $query = $query->where('sex', '=', $params['sex']);
+        }
+        if (isset($params['email']) && $params['email'] !== '') {
+            $query = $query->where('email', 'like', '%' . $params['email'] . '%');
+        }
+        if (isset($params['status']) && $params['status'] !== '') {
+            $query = $query->where('status', '=', $params['status']);
+        }
+        $query = $query->paginate();
+        return $query;
+    }
+
+    // 添加
+    public function add($params)
+    {
+        try {
+            DB::beginTransaction();
+            // 管理员入库
+            $model = new AdminUser();
+            $model->username = $params['username'];
+            $model->password = $params['password'];
+            $model->name = $params['name'];
+            $model->sex = $params['sex'];
+            $model->avatar = $params['avatar'];
+            $model->email = $params['email'];
+            $model->status = $params['status'];
+            if (!$model->save()) {
+                throw new \Exception('添加失败');
+            }
+            // 关联角色入库
+            if (isset($params['admin_role_id']) && is_array($params['admin_role_id'])) {
+                $params['admin_role_id'] = AdminRole::whereIn('id', $params['admin_role_id'])->pluck('id')->toArray();
+                foreach ($params['admin_role_id'] as $value) {
+                    $adminRoleUser = new AdminRoleUser();
+                    $adminRoleUser->admin_role_id = $value;
+                    $adminRoleUser->admin_user_id = $model->id;
+                    if (!$adminRoleUser->save()) {
+                        throw new \Exception('添加失败');
+                    }
+                }
+            }
+            // 关联权限入库
+            if (isset($params['admin_permission_id']) && is_array($params['admin_permission_id'])) {
+                $params['admin_permission_id'] = AdminPermission::whereIn('id', $params['admin_permission_id'])->pluck('id')->toArray();
+                foreach ($params['admin_permission_id'] as $value) {
+                    $adminUserPermission = new AdminUserPermission();
+                    $adminUserPermission->admin_user_id = $model->id;
+                    $adminUserPermission->admin_permission_id = $value;
+                    if (!$adminUserPermission->save()) {
+                        throw new \Exception('添加失败');
+                    }
+                }
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ['code'=>400, 'data'=>[], 'msg'=>'添加失败'];
+        }
+        return ['code'=>200, 'data'=>[], 'msg'=>'添加成功'];
+    }
+
+    // 修改
+    public function edit($params)
+    {
+        try {
+            DB::beginTransaction();
+            // 管理员入库
+            $data = array_only($params, ['username', 'password', 'name', 'sex', 'avatar', 'email', 'status']);
+            $model = AdminUser::where('id', $params['id'])->update($data);
+            if (!$model) {
+                throw new \Exception('修改失败');
+            }
+            // 删除拥有过的角色，权限
+            AdminRoleUser::where('admin_user_id', $params['id'])->delete();
+            AdminUserPermission::where('admin_user_id', $params['id'])->delete();
+            // 关联角色入库
+            if (isset($params['admin_role_id']) && is_array($params['admin_role_id'])) {
+                $params['admin_role_id'] = AdminRole::whereIn('id', $params['admin_role_id'])->pluck('id')->toArray();
+                foreach ($params['admin_role_id'] as $value) {
+                    $adminRoleUser = new AdminRoleUser();
+                    $adminRoleUser->admin_role_id = $value;
+                    $adminRoleUser->admin_user_id = $params['id'];
+                    if (!$adminRoleUser->save()) {
+                        throw new \Exception('修改失败');
+                    }
+                }
+            }
+            // 关联权限入库
+            if (isset($params['admin_permission_id']) && is_array($params['admin_permission_id'])) {
+                $params['admin_permission_id'] = AdminPermission::whereIn('id', $params['admin_permission_id'])->pluck('id')->toArray();
+                foreach ($params['admin_permission_id'] as $value) {
+                    $adminUserPermission = new AdminUserPermission();
+                    $adminUserPermission->admin_user_id = $params['id'];
+                    $adminUserPermission->admin_permission_id = $value;
+                    if (!$adminUserPermission->save()) {
+                        throw new \Exception('修改失败');
+                    }
+                }
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ['code'=>400, 'data'=>[], 'msg'=>'修改失败'];
+        }
+        return ['code'=>200, 'data'=>[], 'msg'=>'修改成功'];
+    }
+
+    // 删除
+    public function del($id)
+    {
+        try {
+            DB::beginTransaction();
+            // 管理员删除
+            $model = AdminUser::destroy($id);
+            if (!$model) {
+                throw new \Exception('删除失败');
+            }
+            // 删除拥有的角色，权限
+            AdminRoleUser::where('admin_user_id', $id)->delete();
+            AdminUserPermission::where('admin_user_id', $id)->delete();
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ['code'=>400, 'data'=>[], 'msg'=>'删除失败'];
+        }
+        return ['code'=>200, 'data'=>[], 'msg'=>'删除成功'];
     }
 }
