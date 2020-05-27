@@ -17,8 +17,35 @@
     <script src="{{ asset('plugins/bootstrap-fileinput/js/locales/zh.js') }}"></script>
     <script>
         $(document).ready(function () {
+            // 插件激活
             $('.select2').select2();
+
+            // 菜单栏展开效果,拿到URL进行激活相应的标签
+            var url = location.protocol+"//"+location.hostname+location.pathname;
+            // active是放在li标签上的,不是a标签
+            var a = $("ul.sidebar-menu a[href='"+url+"']").parent('li').addClass('active');
+            // 如果li标签上有ul，ul上还有li标签，多么是多级嵌套
+            var parentLi = a.parent('ul').parent();
+            if (parentLi.is('li')) {
+                a.parent('ul').show();
+                parentLi.addClass('menu-open').css("height","auto");
+                activeLi(parentLi);
+            }
         });
+
+        // 菜单栏向上展开效果
+        function activeLi(li) {
+            var parentLi = li.parent('ul').parent();
+            if (parentLi.is('li')) {
+                li.parent('ul').show();
+                parentLi.addClass("menu-open").css("height", 'auto');
+                activeLi(parentLi);
+            }else {
+                li.addClass('active');
+            }
+        }
+
+        // 清空缓存
         function clearCache() {
            layui.use('layer', function(){
                var layer = layui.layer;

@@ -364,6 +364,7 @@ class Cache
         // 默认管理员不受权限控制，拥有所有权限标识。
         if ($adminId == 1) {
             $permissionMenu = $this->getAllPermissionMenu();
+            $permissionMenu = toMultiArray($permissionMenu);
             $permissionMenu = toMenuHtml($permissionMenu);
             $permissionMenu = serialize($permissionMenu);
             Redis::hSet(self::ADMIN_PERMISSION_MENU, $adminId, $permissionMenu);
@@ -390,6 +391,7 @@ class Cache
         $permissionMenu = array_merge($permissionMenu, $permission);
         $permissionMenu = array_unique($permissionMenu);
         // 转换字符串菜单
+        $permissionMenu = toMultiArray($permissionMenu);
         $permissionMenu = toMenuHtml($permissionMenu);
         $permissionMenu = serialize($permissionMenu);
         Redis::hSet(self::ADMIN_PERMISSION_MENU, $adminId, $permissionMenu);
@@ -400,7 +402,6 @@ class Cache
     {
         static $adminPermissionMenu = [];
         if (!isset($adminPermissionMenu[$adminId])) {
-            echo 1;
             if (!Redis::hExists(self::ADMIN_PERMISSION_MENU, $adminId)) {
                 $this->updateAdminPermissionMenu($adminId);
             }

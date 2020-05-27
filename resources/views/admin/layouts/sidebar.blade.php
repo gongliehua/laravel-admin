@@ -13,38 +13,18 @@
             </div>
             <!-- sidebar menu: : style can be found in sidebar.less -->
             <ul class="sidebar-menu" data-widget="tree">
+
                 <li class="header">菜单</li>
+
                 {{-- 每个人都应该有权限查看，所以直接写在这里 --}}
                 <li @if(\Illuminate\Support\Facades\Route::currentRouteName() == 'admin') class="active" @endif >
                     <a href="{{ route('admin') }}">
                         <i class="fa fa-home"></i> <span>首页</span>
                     </a>
                 </li>
-                <li class="treeview">
-                    <a href="javascript:;">
-                        <i class="fa fa-group"></i> <span>用户管理</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li><a href="{{ route('admin.admin') }}"><i class="fa fa-circle-o"></i> 用户管理</a></li>
-                        <li><a href="{{ route('admin.role') }}"><i class="fa fa-circle-o"></i> 角色管理</a></li>
-                        <li><a href="{{ route('admin.permission') }}"><i class="fa fa-circle-o"></i> 权限管理</a></li>
-                    </ul>
-                </li>
-                <li class="treeview">
-                    <a href="javascript:;">
-                        <i class="fa fa-gears"></i> <span>系统管理</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li><a href="{{ route('admin.setting') }}"><i class="fa fa-circle-o"></i> 系统设置</a></li>
-                        <li><a href="{{ route('admin.operation_log') }}"><i class="fa fa-circle-o"></i> 日志列表</a></li>
-                    </ul>
-                </li>
+
+                {!! \App\Libraries\Cache::getInstance()->getAdminPermissionMenu(getAdminAuth()->id()) !!}
+
                 {{-- 开发阶段的辅助功能，所以直接写在这里 --}}
                 @if(config('admin.develop') && getAdminAuth()->id() == 1)
                     <li @if(\Illuminate\Support\Facades\Route::currentRouteName() == 'admin.config') class="active" @endif >
@@ -53,6 +33,7 @@
                         </a>
                     </li>
                 @endif
+
             </ul>
         </section>
         <!-- /.sidebar -->

@@ -98,24 +98,26 @@ function toMultiArray($data = [], $parent_id = 0)
 }
 
 // 无限级多维数组转换成菜单字符串
-function toMenuHtml($data = [])
+function toMenuHtml($data)
 {
     $result = '';
     foreach ($data as $key=>$value) {
-        // 这个路由名称不存在可能会抛异常,所以用try捕获
+        // 这个路由名称不存在会抛异常,所以用try捕获
         try {
             $routeUrl = strlen($value['slug']) ? route($value['slug']) : 'javascript:;';
         } catch (\Exception $e) {
             $routeUrl = 'javascript:;';
         }
         if (empty($value['child'])) {
-            $aTag  = '<a href="'. $routeUrl .'"><i class="menu-icon fa '. $value['icon'] .'"></i><span class="menu-text">'. $value['title'] .'</span></a><b class="arrow"></b>';
+            $className = '';
+            $aTag  = '<a href="'. $routeUrl .'" target="menuFrame"><i class="fa '. $value['icon'] .'"></i> <span>'. $value['title'] .'</span></a>';
         } else {
-            $aTag  = '<a href="'. $routeUrl .'" class="dropdown-toggle"><i class="menu-icon fa '. $value['icon'] .'"></i><span class="menu-text">'. $value['title'] .'</span><b class="arrow fa fa-angle-down"></b></a><b class="arrow"></b>';
+            $className = 'treeview';
+            $aTag  = '<a href="'. $routeUrl .'"><i class="fa '. $value['icon'] .'"></i> <span>'. $value['title'] .'</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>';
         }
-        $result .= '<li class="">'.$aTag;
+        $result .= '<li class="'. $className .'">'.$aTag;
         if (!empty($value['child'])) {
-            $result .= '<ul class="submenu">'. toMenuHtml($value['child']) .'</ul>';
+            $result .= '<ul class="treeview-menu" style="display: none;">'. toMenuHtml($value['child']) .'</ul>';
         }
         $result .= '</li>';
     }
