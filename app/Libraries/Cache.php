@@ -3,6 +3,7 @@
 namespace App\Libraries;
 
 use App\Models\AdminPermission;
+use App\Models\Config;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\RoleAdmin;
@@ -34,6 +35,9 @@ class Cache
     // 管理员所拥有的权限菜单，由于多个管理员，所以使用哈希。用于菜单构建功能，这里会直接转字符串
     const ADMIN_PERMISSION_MENU = 'laravel_admin_permission_menu';
 
+    // 配置项,键值对数组格式存储
+    const CONFIG = 'laravel_config';
+
     // 单例模式实例
     private static $instance = null;
 
@@ -59,6 +63,36 @@ class Cache
         Redis::del(self::ADMIN_PERMISSION_ID);
         Redis::del(self::ADMIN_PERMISSION_SLUG);
         Redis::del(self::ADMIN_PERMISSION_MENU);
+        Redis::del(self::CONFIG);
+    }
+
+    // 清空管理员缓存,用于管理员的修改和删除
+    public function clearAdmin($adminId = 0)
+    {
+        $this->updateAdminRoleId($adminId);
+        $this->updateAdminPermissionId($adminId);
+        $this->updateAdminPermissionSlug($adminId);
+        $this->updateAdminPermissionMenu($adminId);
+    }
+
+    // 清空角色的缓存，用于角色的修改和删除
+    public function clearRole($roleId = 0)
+    {
+        $this->updateAllRole();
+        $this->updateRolePermissionId($roleId);
+        $this->updateRolePermissionSlug($roleId);
+        $this->updateRolePermissionMenu($roleId);
+        // 更新所有管理员的缓存
+        $this->clearAdmin();
+    }
+
+    // 清空权限缓存，用于权限的添加，修改，删除
+    public function clearPermission()
+    {
+        $this->updateAllPermission();
+        $this->updateAllPermissionMenu();
+        // 更新角色，角色又会去更新管理员的
+        $this->clearRole();
     }
 
     // 更新所有角色
@@ -212,18 +246,17 @@ class Cache
             return;
         }
         // 获取正常的权限菜单，角色必须也得正常
-        $role = Role::with(['permission'=>function($query){
-            $query->where('status', Permission::STATUS_NORMAL)->where('is_menu', Permission::IS_MENU_ON);
-        }])->where('id', $roleId)->where('status', Role::STATUS_NORMAL)->first();
+        $role = Role::where('id', $roleId)->where('status', Role::STATUS_NORMAL)->first();
         // 如果这个角色不正常也就是说这个角色没有任何菜单
         if (!$role) {
             Redis::hSet(self::ROLE_PERMISSION_MENU, $roleId, serialize([]));
             return;
         }
-        // 拿到权限菜单
-        $menu = $role->permission->toArray();
-        $menu = serialize($menu);
-        Redis::hSet(self::ROLE_PERMISSION_MENU, $roleId, $menu);
+        // 获取这个角色所有权限ID
+        $permissionId = RolePermission::where('role_id', $roleId)->pluck('permission_id')->toArray();
+        $permissionId = Permission::whereIn('id', $permissionId)->where('status', Permission::STATUS_NORMAL)->where('is_menu', Permission::IS_MENU_ON)->get()->toArray();
+        $permissionId = serialize($permissionId);
+        Redis::hSet(self::ROLE_PERMISSION_MENU, $roleId, $permissionId);
     }
 
     // 获取角色拥有的权限菜单
@@ -250,7 +283,7 @@ class Cache
             return;
         }
         // 拿到角色ID
-        $roleId = RoleAdmin::where('admin_id')->pluck('role_id')->toArray();
+        $roleId = RoleAdmin::where('admin_id', $adminId)->pluck('role_id')->toArray();
         $roleId = serialize($roleId);
         Redis::hSet(self::ADMIN_ROLE_ID, $adminId, $roleId);
     }
@@ -279,7 +312,7 @@ class Cache
             return;
         }
         // 拿到权限ID
-        $permissionId = AdminPermission::where('admin_id')->pluck('permission_id')->toArray();
+        $permissionId = AdminPermission::where('admin_id', $adminId)->pluck('permission_id')->toArray();
         $permissionId = serialize($permissionId);
         Redis::hSet(self::ADMIN_PERMISSION_ID, $adminId, $permissionId);
     }
@@ -311,6 +344,7 @@ class Cache
         if ($adminId == 1) {
             $slug = Permission::pluck('slug')->toArray();
             $slug = array_filter($slug);
+            $slug = serialize($slug);
             Redis::hSet(self::ADMIN_PERMISSION_SLUG, $adminId, $slug);
             return;
         }
@@ -326,6 +360,7 @@ class Cache
         // 清除多余变量，和去重权限标识
         unset($role, $_slug);
         $slug = array_unique($slug);
+        $slug = array_filter($slug);
 
         // 再来拿直接拥有的权限标识(里面包含了禁用了的权限ID所以得过滤一下)
         $permissionId = $this->getAdminPermissionId($adminId);
@@ -381,7 +416,8 @@ class Cache
         }
         // 清除多余变量，和去重权限标识
         unset($role, $_permissionMenu);
-        $permissionMenu = array_unique($permissionMenu);
+        // 这里需要注意，某些php版本中,如果数组中的值是整型则会报Array to string conversion，所以加上SORT_REGULAR
+        $permissionMenu = array_unique($permissionMenu, SORT_REGULAR);
 
         // 再来拿直接拥有的权限权限(里面包含了禁用了的权限ID所以得过滤一下)
         $permissionId = $this->getAdminPermissionId($adminId);
@@ -389,7 +425,8 @@ class Cache
         // 合并角色拥有的，和直接拥有的标识
         $permission = array_filter($permission);
         $permissionMenu = array_merge($permissionMenu, $permission);
-        $permissionMenu = array_unique($permissionMenu);
+        // 这里需要注意，某些php版本中,如果数组中的值是整型则会报Array to string conversion，所以加上SORT_REGULAR
+        $permissionMenu = array_unique($permissionMenu, SORT_REGULAR);
         // 转换字符串菜单
         $permissionMenu = toMultiArray($permissionMenu);
         $permissionMenu = toMenuHtml($permissionMenu);
@@ -397,7 +434,7 @@ class Cache
         Redis::hSet(self::ADMIN_PERMISSION_MENU, $adminId, $permissionMenu);
     }
 
-    // 获取管理员拥有的权限标识
+    // 获取管理员拥有的权限菜单
     public function getAdminPermissionMenu($adminId = 0)
     {
         static $adminPermissionMenu = [];
@@ -409,5 +446,31 @@ class Cache
             $adminPermissionMenu[$adminId] = unserialize($adminPermissionMenu[$adminId]);
         }
         return $adminPermissionMenu[$adminId];
+    }
+
+    // 更新配置项
+    public function updateConfig()
+    {
+        $config = Config::pluck('value', 'variable')->toArray();
+        $config = serialize($config);
+        Redis::set(self::CONFIG, $config);
+    }
+
+    // 获取配置项
+    public function getConfig($key = null, $default = null)
+    {
+        static $config = null;
+        if ($config === null) {
+            if (!Redis::exists(self::CONFIG)) {
+                $this->updateConfig();
+            }
+            $config = Redis::get(self::CONFIG);
+            $config = unserialize($config);
+        }
+        if ($key === null) {
+            return $config;
+        } else {
+            return $config[$key] ?? $default;
+        }
     }
 }

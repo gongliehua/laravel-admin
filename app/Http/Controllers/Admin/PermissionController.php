@@ -30,8 +30,9 @@ class PermissionController extends BaseController
         // 查找所有数据排序后再分页显示
         $result = Cache::getInstance()->getAllPermission();
         $result = new LengthAwarePaginator(array_slice($result, $offset, $pageSize), count($result), $pageSize, $page, ['path'=>$request->url(), 'query'=>$request->query()]);
+        $breadcrumb = getBreadcrumb();
 
-        return view('admin.permission.index', compact('result'));
+        return view('admin.permission.index', compact('result', 'breadcrumb'));
     }
 
     // 添加
@@ -72,6 +73,10 @@ class PermissionController extends BaseController
             $validate = PermissionValidate::edit($params);
             if ($validate['code'] != 200) {
                 return response()->json($validate);
+            }
+            // 如果 非开发模式并且非默认管理员 是不能修改权限标识的(防止普通用户乱操作,导致权限错乱)
+            if (!(config('admin.develop') && getAdminAuth()->id() == 1)) {
+                unset($params['slug']);
             }
             // 数据操作
             $model = (new Permission())->edit($params);
@@ -122,6 +127,10 @@ class PermissionController extends BaseController
                 }
             }
 
+        }
+        if ($addRouteName) {
+            // 更新Redis
+            Cache::getInstance()->clearPermission();
         }
         return response()->json(['code'=>200, 'data'=>compact('addRouteName', 'failRouteName'), 'msg'=>'请求成功']);
     }

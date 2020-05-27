@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libraries\Cache;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 // 配置
@@ -45,6 +46,8 @@ class Config extends BaseModel
                 Config::where('id', $value->id)->update(['value'=>null]);
             }
         }
+        // 更新Redis
+        Cache::getInstance()->updateConfig();
     }
 
     // 添加
@@ -57,7 +60,13 @@ class Config extends BaseModel
         $model->item = $params['item'];
         $model->value = $params['value'];
         $model->sort = strlen($params['sort']) ? $params['sort'] : $this->max('sort') + 1;
-        return $model->save() ? ['code'=>200, 'data'=>[], 'msg'=>'添加成功'] : ['code'=>400, 'data'=>[], 'msg'=>'添加失败'];
+        if ($model->save()) {
+            // 更新Redis
+            Cache::getInstance()->updateConfig();
+            return ['code'=>200, 'data'=>[], 'msg'=>'添加成功'];
+        } else {
+            return ['code'=>400, 'data'=>[], 'msg'=>'添加失败'];
+        }
     }
 
     // 修改
@@ -65,7 +74,13 @@ class Config extends BaseModel
     {
         $data = array_only($params, ['title', 'variable', 'type', 'item', 'value', 'sort']);
         $model = Config::where('id', $params['id'])->update($data);
-        return $model ? ['code'=>200, 'data'=>[], 'msg'=>'修改成功'] : ['code'=>400, 'data'=>[], 'msg'=>'修改失败'];
+        if ($model) {
+            // 更新Redis
+            Cache::getInstance()->updateConfig();
+            return ['code'=>200, 'data'=>[], 'msg'=>'修改成功'];
+        } else {
+            return ['code'=>400, 'data'=>[], 'msg'=>'修改失败'];
+        }
     }
 
     // 排序

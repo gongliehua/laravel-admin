@@ -80,20 +80,6 @@
                                         <input type="email" name="email" value="{{ $admin->email }}" class="form-control" id="email" placeholder="电子邮箱" autocomplete="off">
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="" class="col-sm-2 control-label"><i class="text-red">*</i> 状态</label>
-                                    <div class="col-sm-8">
-                                        @foreach($admin->statusLabel as $key=>$val)
-                                            <label class="radio-inline">
-                                                <input type="radio" name="status" value="{{ $key }}" @if($admin->status == $key) checked @endif @if($admin->id == 1) disabled @endif > {{ $val }}
-                                            </label>
-                                        @endforeach
-                                        @if($admin->id == 1)
-                                            <input type="hidden" name="status" value="{{ $admin->status }}">
-                                            <span class="help-block"><i class="fa fa-info-circle"></i> 默认管理员不受状态限制</span>
-                                        @endif
-                                    </div>
-                                </div>
                             </div>
                             <!-- /.box-body -->
                             <div class="box-footer">

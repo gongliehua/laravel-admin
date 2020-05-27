@@ -18,7 +18,8 @@ class AdminController extends BaseController
     {
         $params = $request->all();
         $result = (new Admin())->search($params);
-        return view('admin.admin.index', compact('result'));
+        $breadcrumb = getBreadcrumb();
+        return view('admin.admin.index', compact('result', 'breadcrumb'));
     }
 
     // 添加

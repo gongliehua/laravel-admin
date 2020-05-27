@@ -33,7 +33,7 @@
                         <form action="" method="post" onsubmit="return sort()">
                         {{ csrf_field() }}
                         <div class="box-body">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered table-hover">
                                 <tr>
                                     <th>#</th>
                                     <th>排序</th>

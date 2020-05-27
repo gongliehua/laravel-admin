@@ -13,13 +13,25 @@
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
-                角色管理
+                @if($breadcrumb)
+                    {{ end($breadcrumb)['title'] }}
+                @endif
                 <small></small>
             </h1>
             <ol class="breadcrumb">
                 <li><a href="{{ route('admin') }}"><i class="fa fa-home"></i> 首页</a></li>
-                <li>用户管理</li>
-                <li class="active">角色管理</li>
+                @if($breadcrumb)
+                    @foreach($breadcrumb as $value)
+                        @php
+                            try {
+                                $route = route($value['slug']);
+                            } catch (\Exception $e) {
+                                $route = 'javascript:;';
+                            }
+                        @endphp
+                        <li><a href="{{ $route }}">{{ $value['title'] }}</a></li>
+                    @endforeach
+                @endif
             </ol>
         </section>
 
@@ -72,7 +84,7 @@
                         </div>
                         <!-- /.box-header -->
                         <div class="box-body">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered table-hover">
                                 <tr>
                                     <th>#</th>
                                     <th>名称</th>

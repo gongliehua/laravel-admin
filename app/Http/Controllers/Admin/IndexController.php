@@ -44,10 +44,6 @@ class IndexController extends BaseController
             } else {
                 $params['avatar'] = getAdminAuth()->user()->avatar;
             }
-            // 默认管理员不受状态限制
-            if ($admin->id == 1) {
-                $params['status'] = Admin::STATUS_NORMAL;
-            }
             // 数据操作
             $adminUser = (new Admin())->profile($params);
             return response()->json($adminUser);

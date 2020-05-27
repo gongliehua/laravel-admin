@@ -10,13 +10,25 @@
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
-                权限管理
+                @if($breadcrumb)
+                    {{ end($breadcrumb)['title'] }}
+                @endif
                 <small></small>
             </h1>
             <ol class="breadcrumb">
                 <li><a href="{{ route('admin') }}"><i class="fa fa-home"></i> 首页</a></li>
-                <li>用户管理</li>
-                <li class="active">权限管理</li>
+                @if($breadcrumb)
+                    @foreach($breadcrumb as $value)
+                        @php
+                            try {
+                                $route = route($value['slug']);
+                            } catch (\Exception $e) {
+                                $route = 'javascript:;';
+                            }
+                        @endphp
+                        <li><a href="{{ $route }}">{{ $value['title'] }}</a></li>
+                    @endforeach
+                @endif
             </ol>
         </section>
 
@@ -39,7 +51,7 @@
                         <form action="" method="post" onsubmit="return sort()">
                         {{ csrf_field() }}
                         <div class="box-body">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered table-hover">
                                 <tr>
                                     <th>#</th>
                                     <th>排序</th>
@@ -260,14 +272,23 @@
                             data: {},
                             dataType: "json",
                             success: function(res){
-                                layui.use('layer', function () {
-                                    var layer = layui.layer;
-                                    layer.ready(function () {
-                                        layer.alert("共新增"+res.data.addRouteName.length+"条路由，"+res.data.failRouteName.length+"条操作失败。\n", {}, function (index) {
-                                            location.reload();
+                                if (res.code == 200) {
+                                    layui.use('layer', function () {
+                                        var layer = layui.layer;
+                                        layer.ready(function () {
+                                            layer.alert("共新增"+res.data.addRouteName.length+"条路由，"+res.data.failRouteName.length+"条操作失败。\n", {}, function (index) {
+                                                location.reload();
+                                            });
                                         });
                                     });
-                                });
+                                } else {
+                                    layui.use('layer', function () {
+                                        var layer = layui.layer;
+                                        layer.ready(function () {
+                                            layer.msg(res.msg);
+                                        });
+                                    });
+                                }
                             },
                             error: function(){
                                 layui.use('layer', function () {

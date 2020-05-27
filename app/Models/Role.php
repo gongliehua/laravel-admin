@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libraries\Cache;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
@@ -74,6 +75,8 @@ class Role extends BaseModel
             DB::rollBack();
             return ['code'=>400, 'data'=>[], 'msg'=>'添加失败'];
         }
+        // 更新Redis
+        Cache::getInstance()->updateAllRole();
         return ['code'=>200, 'data'=>[], 'msg'=>'添加成功'];
     }
 
@@ -108,6 +111,8 @@ class Role extends BaseModel
             DB::rollBack();
             return ['code'=>400, 'data'=>[], 'msg'=>'修改失败'];
         }
+        // 更新Redis
+        Cache::getInstance()->clearRole($params['id']);
         return ['code'=>200, 'data'=>[], 'msg'=>'修改成功'];
     }
 
@@ -117,6 +122,8 @@ class Role extends BaseModel
         Role::destroy($id);
         RoleAdmin::where('role_id', $id)->delete();
         RolePermission::where('role_id', $id)->delete();
+        // 更新Redis
+        Cache::getInstance()->clearRole($id);
         return ['code'=>200, 'data'=>[], 'msg'=>'删除成功'];
     }
 }

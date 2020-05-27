@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Libraries\Cache;
 use App\Models\Config;
 use App\Validate\ConfigValidate;
 use Illuminate\Http\Request;
@@ -18,7 +19,8 @@ class ConfigController extends BaseController
             return response()->json(['code'=>200, 'data'=>[], 'msg'=>'修改成功']);
         }
         $result = Config::orderBy('sort', 'ASC')->get();
-        return view('admin.config.setting', compact('result'));
+        $breadcrumb = getBreadcrumb();
+        return view('admin.config.setting', compact('result', 'breadcrumb'));
     }
 
     // 列表
@@ -76,6 +78,12 @@ class ConfigController extends BaseController
     public function delete(Request $request)
     {
         $info = Config::destroy($request->input('id'));
-        return $info ? ['code'=>200, 'data'=>[], 'msg'=>'删除成功'] : ['code'=>400, 'data'=>[], 'msg'=>'删除失败'];
+        if ($info) {
+            // 更新Redis
+            Cache::getInstance()->updateConfig();
+            return ['code'=>200, 'data'=>[], 'msg'=>'删除成功'];
+        } else {
+            return ['code'=>400, 'data'=>[], 'msg'=>'删除失败'];
+        }
     }
 }

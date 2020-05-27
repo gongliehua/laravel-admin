@@ -32,7 +32,10 @@
                         <div class="form-group">
                             <label for="slug" class="col-sm-2 control-label">标识</label>
                             <div class="col-sm-9">
-                                <input type="text" name="slug" value="{{ $info->slug }}" class="form-control" id="slug" placeholder="标识" autocomplete="off">
+                                <input type="text" name="slug" value="{{ $info->slug }}" class="form-control" id="slug" placeholder="标识" autocomplete="off" @if(!(config('admin.develop') && getAdminAuth()->id() == 1)) disabled @endif >
+                                @if(!(config('admin.develop') && getAdminAuth()->id() == 1))
+                                    <input type="hidden" name="slug" value="{{ $info->slug }}">
+                                @endif
                             </div>
                         </div>
                         <div class="form-group">

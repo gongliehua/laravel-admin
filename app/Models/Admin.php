@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libraries\Cache;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -53,7 +54,7 @@ class Admin extends Authenticatable
     // 个人信息
     public function profile($params)
     {
-        $data = array_only($params, ['username', 'password', 'name', 'sex', 'avatar', 'email', 'status']);
+        $data = array_only($params, ['username', 'password', 'name', 'sex', 'avatar', 'email']);
         $model = Admin::where('id', getAdminAuth()->id())->update($data);
         return $model ? ['code'=>200, 'data'=>[], 'msg'=>'修改成功'] : ['code'=>400, 'data'=>[], 'msg'=>'修改失败'];
     }
@@ -192,6 +193,8 @@ class Admin extends Authenticatable
             DB::rollBack();
             return ['code'=>400, 'data'=>[], 'msg'=>'修改失败'];
         }
+        // 更新Redis
+        Cache::getInstance()->clearAdmin($params['id']);
         return ['code'=>200, 'data'=>[], 'msg'=>'修改成功'];
     }
 
@@ -213,6 +216,8 @@ class Admin extends Authenticatable
             DB::rollBack();
             return ['code'=>400, 'data'=>[], 'msg'=>'删除失败'];
         }
+        // 更新Redis
+        Cache::getInstance()->clearAdmin($id);
         return ['code'=>200, 'data'=>[], 'msg'=>'删除成功'];
     }
 }

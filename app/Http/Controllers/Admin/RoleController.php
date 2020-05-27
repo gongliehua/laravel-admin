@@ -16,7 +16,8 @@ class RoleController extends BaseController
     {
         $params = $request->all();
         $result = (new Role())->search($params);
-        return view('admin.role.index', compact('result'));
+        $breadcrumb = getBreadcrumb();
+        return view('admin.role.index', compact('result', 'breadcrumb'));
     }
 
     // 添加

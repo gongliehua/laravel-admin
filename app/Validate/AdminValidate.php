@@ -41,7 +41,6 @@ class AdminValidate
             'sex'=>'required|in:' . implode(',', array_keys($admin->sexLabel)),
             'avatar'=>'image',
             'email'=>'present|nullable|email|max:200',
-            'status'=>'required|in:' . implode(',', array_keys($admin->statusLabel)),
         ];
         $messages = [];
         $customAttributes = [
@@ -51,7 +50,6 @@ class AdminValidate
             'sex'=>'性别',
             'avatar'=>'头像',
             'email'=>'电子邮箱',
-            'status'=>'状态',
         ];
         $validator = Validator::make($params, $rules, $messages, $customAttributes);
         if ($validator->fails()) {

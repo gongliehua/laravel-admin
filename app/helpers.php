@@ -55,8 +55,12 @@ function checkPermission($slug)
         if ($isDefaultAdmin && !config('admin.develop') && in_array($slug, config('admin.noNeedDevelop'))) {
             return false;
         }
-        if (!$isDefaultAdmin && !in_array($slug, config('admin.noNeedRight'))) {
-            // 需要鉴权
+        if (!$isDefaultAdmin && !in_array($slug, config('admin.noNeedLogin')) && !in_array($slug, config('admin.noNeedRight'))) {
+            // 获取当前管理员的所有权限
+            $adminPermissionSlug = \App\Libraries\Cache::getInstance()->getAdminPermissionSlug(getAdminAuth()->id());
+            if (!in_array($slug, $adminPermissionSlug)) {
+                return false;
+            }
         }
     } else {
         if (!in_array($slug, config('admin.noNeedLogin'))) {
@@ -110,7 +114,7 @@ function toMenuHtml($data)
         }
         if (empty($value['child'])) {
             $className = '';
-            $aTag  = '<a href="'. $routeUrl .'" target="menuFrame"><i class="fa '. $value['icon'] .'"></i> <span>'. $value['title'] .'</span></a>';
+            $aTag  = '<a href="'. $routeUrl .'"><i class="fa '. $value['icon'] .'"></i> <span>'. $value['title'] .'</span></a>';
         } else {
             $className = 'treeview';
             $aTag  = '<a href="'. $routeUrl .'"><i class="fa '. $value['icon'] .'"></i> <span>'. $value['title'] .'</span><span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>';
@@ -145,4 +149,24 @@ function getChildPermissionId($id)
     arraySort([], 0, 0, true);
     $allChildPermissionId = array_column($allChildPermission, 'id');
     return $allChildPermissionId;
+}
+
+// 通过当前路由生成面包屑
+function getBreadcrumb()
+{
+    // 当前路由名称
+    $slug = \Illuminate\Support\Facades\Route::currentRouteName();
+    if (!$slug) {
+        return [];
+    }
+    // 所有的权限ID=》标识，方便查找到相应的ID
+    $allPermission = \App\Libraries\Cache::getInstance()->getAllPermission();
+    $allSlug = array_column($allPermission, 'slug', 'id');
+    $id = array_search($slug, $allSlug);
+    if ($id === false) {
+        return [];
+    }
+    // 递归查找上级
+    $breadcrumb = getParents($allPermission, $id);
+    return $breadcrumb;
 }

@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 27/05/2020 18:24:41
+ Date: 28/05/2020 03:25:59
 */
 
 SET NAMES utf8mb4;
@@ -27,6 +27,11 @@ CREATE TABLE `admin_permissions`  (
   `created_at` timestamp(0) NULL DEFAULT NULL,
   `updated_at` timestamp(0) NULL DEFAULT NULL
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '管理员和权限的关系表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of admin_permissions
+-- ----------------------------
+INSERT INTO `admin_permissions` VALUES (2, 1, '2020-05-28 03:14:45', '2020-05-28 03:14:45');
 
 -- ----------------------------
 -- Table structure for admins
@@ -47,12 +52,13 @@ CREATE TABLE `admins`  (
   `deleted_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `username`(`username`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '管理员表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '管理员表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of admins
 -- ----------------------------
-INSERT INTO `admins` VALUES (1, 'admin', '$2y$10$go4kR6XbqWjuj5ZbysPU/eZnNNr9/cNN9pmjoMJFLzyRIz81QRJPq', '默认管理员', 0, NULL, NULL, 1, NULL, '2020-05-27 18:15:26', '2020-05-27 18:15:28', NULL);
+INSERT INTO `admins` VALUES (1, 'admin', '$2y$10$f5Q/qz1Xd1FVClIzJruvXu9U/tBRMKTob0I8ozxrv.Qtp5kYhy72e', '默认管理员', 1, NULL, '1196974868@qq.com', 1, NULL, '2020-05-27 18:15:26', '2020-05-28 03:12:25', NULL);
+INSERT INTO `admins` VALUES (2, 'demo', '$2y$10$c6LVVOA/MJP52YPmKUQcHOsV/lXPMQ0jQnHfx9fE5y9DI4hNe2vR2', 'Demo', 1, NULL, 'demo@example.com', 1, NULL, '2020-05-28 03:13:08', '2020-05-28 03:14:45', NULL);
 
 -- ----------------------------
 -- Table structure for configs
@@ -70,7 +76,16 @@ CREATE TABLE `configs`  (
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   `deleted_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '配置表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '配置表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of configs
+-- ----------------------------
+INSERT INTO `configs` VALUES (1, '网站是否开启', 'siteOpen', 3, '开启,关闭', '开启', 1, '2020-05-28 03:15:45', '2020-05-28 03:24:10', NULL);
+INSERT INTO `configs` VALUES (2, '网站标题', 'siteTitle', 1, NULL, '使用Laravel搭建的网站', 2, '2020-05-28 03:15:57', '2020-05-28 03:24:10', NULL);
+INSERT INTO `configs` VALUES (3, '网站关键字', 'siteKeyWords', 1, NULL, 'Laravel,网站', 3, '2020-05-28 03:16:27', '2020-05-28 03:24:10', NULL);
+INSERT INTO `configs` VALUES (4, '网站描述', 'siteDescription', 2, NULL, '为了快速开发而搭建的一套网站后台模板。使用Laravel框架，选用AdminLTE作为后台模板，为了提高RBAC权限性能而使用了Redis缓存技术。', 4, '2020-05-28 03:16:43', '2020-05-28 03:24:10', NULL);
+INSERT INTO `configs` VALUES (5, '备案，版权信息', 'footerInfo', 2, NULL, '版权是个什么东东？', 5, '2020-05-28 03:17:22', '2020-05-28 03:24:10', NULL);
 
 -- ----------------------------
 -- Table structure for operation_logs
@@ -144,6 +159,11 @@ CREATE TABLE `role_admins`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色和管理员的关系表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Records of role_admins
+-- ----------------------------
+INSERT INTO `role_admins` VALUES (1, 2, '2020-05-28 03:14:45', '2020-05-28 03:14:45');
+
+-- ----------------------------
 -- Table structure for role_permissions
 -- ----------------------------
 DROP TABLE IF EXISTS `role_permissions`;
@@ -153,6 +173,17 @@ CREATE TABLE `role_permissions`  (
   `created_at` timestamp(0) NULL DEFAULT NULL,
   `updated_at` timestamp(0) NULL DEFAULT NULL
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色和权限的关系表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of role_permissions
+-- ----------------------------
+INSERT INTO `role_permissions` VALUES (1, 2, '2020-05-28 03:14:13', '2020-05-28 03:14:13');
+INSERT INTO `role_permissions` VALUES (1, 7, '2020-05-28 03:14:13', '2020-05-28 03:14:13');
+INSERT INTO `role_permissions` VALUES (1, 12, '2020-05-28 03:14:13', '2020-05-28 03:14:13');
+INSERT INTO `role_permissions` VALUES (1, 16, '2020-05-28 03:14:13', '2020-05-28 03:14:13');
+INSERT INTO `role_permissions` VALUES (1, 17, '2020-05-28 03:14:13', '2020-05-28 03:14:13');
+INSERT INTO `role_permissions` VALUES (1, 18, '2020-05-28 03:14:13', '2020-05-28 03:14:13');
+INSERT INTO `role_permissions` VALUES (1, 19, '2020-05-28 03:14:13', '2020-05-28 03:14:13');
 
 -- ----------------------------
 -- Table structure for roles
@@ -167,6 +198,11 @@ CREATE TABLE `roles`  (
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   `deleted_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '角色表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of roles
+-- ----------------------------
+INSERT INTO `roles` VALUES (1, '观察者', 1, '仅有查看权限', '2020-05-28 03:14:01', '2020-05-28 03:14:01', NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

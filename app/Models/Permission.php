@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libraries\Cache;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 // 权限
@@ -50,7 +51,13 @@ class Permission extends BaseModel
         $model->status = $params['status'];
         $model->remark = $params['remark'];
         $model->sort = strlen($params['sort']) ? $params['sort'] : $this->max('sort') + 1;
-        return $model->save() ? ['code'=>200, 'data'=>[], 'msg'=>'添加成功'] : ['code'=>400, 'data'=>[], 'msg'=>'添加失败'];
+        if ($model->save()) {
+            // 更新Redis
+            Cache::getInstance()->clearPermission();
+            return ['code'=>200, 'data'=>[], 'msg'=>'添加成功'];
+        } else {
+            return ['code'=>400, 'data'=>[], 'msg'=>'添加失败'];
+        }
     }
 
     // 修改
@@ -58,7 +65,13 @@ class Permission extends BaseModel
     {
         $data = array_only($params, ['parent_id', 'title', 'slug', 'icon', 'is_menu', 'status', 'remark', 'sort']);
         $model = Permission::where('id', $params['id'])->update($data);
-        return $model ? ['code'=>200, 'data'=>[], 'msg'=>'修改成功'] : ['code'=>400, 'data'=>[], 'msg'=>'修改失败'];
+        if ($model) {
+            // 更新Redis
+            Cache::getInstance()->clearPermission();
+            return ['code'=>200, 'data'=>[], 'msg'=>'修改成功'];
+        } else {
+            return ['code'=>400, 'data'=>[], 'msg'=>'修改失败'];
+        }
     }
 
     // 删除
@@ -77,6 +90,9 @@ class Permission extends BaseModel
         RolePermission::whereIn('permission_id', $allChildPermissionId)->delete();
         Permission::whereIn('id', $allChildPermissionId)->delete();
 
+        // 更新Redis
+        Cache::getInstance()->clearPermission();
+
         return ['code'=>200, 'data'=>[], 'msg'=>'删除成功'];
     }
 
@@ -86,5 +102,7 @@ class Permission extends BaseModel
         foreach ($params as $key=>$value) {
             Permission::where('id', (int)$key)->update(['sort'=>(int)$value]);
         }
+        // 更新Redis
+        Cache::getInstance()->clearPermission();
     }
 }

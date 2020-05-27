@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Libraries\Cache;
 use App\Models\Admin as AdminModel;
 use Closure;
 use Illuminate\Support\Facades\Route;
@@ -30,8 +31,13 @@ class Admin
                 $msg = '该功能已关闭。如需使用，请开启开发模式';
                 return $request->ajax() ? response()->json(['code'=>422, 'data'=>[], 'msg'=>$msg]) : abort(422, $msg);
             }
-            if (!$isDefaultAdmin && !in_array($currentRouteName, config('admin.noNeedRight'))) {
-                // 需要鉴权
+            if (!$isDefaultAdmin && !in_array($currentRouteName, config('admin.noNeedLogin')) && !in_array($currentRouteName, config('admin.noNeedRight'))) {
+                // 获取当前管理员的所有权限
+                $adminPermissionSlug = Cache::getInstance()->getAdminPermissionSlug(getAdminAuth()->id());
+                if (!in_array($currentRouteName, $adminPermissionSlug)) {
+                    $msg = '您没有该操作权限！';
+                    return $request->ajax() ? response()->json(['code'=>422, 'data'=>[], 'msg'=>$msg]) : abort(422, $msg);
+                }
             }
         } else {
             if (!in_array($currentRouteName, config('admin.noNeedLogin'))) {

@@ -13,7 +13,8 @@ class OperationLogController extends BaseController
     {
         $params = $request->all();
         $result = (new OperationLog())->search($params);
-        return view('admin.operationLog.index', compact('result'));
+        $breadcrumb = getBreadcrumb();
+        return view('admin.operationLog.index', compact('result', 'breadcrumb'));
     }
 
     // 查看

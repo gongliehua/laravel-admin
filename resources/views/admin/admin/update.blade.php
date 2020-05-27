@@ -97,7 +97,7 @@
                                     @endif
                                 </select>
                                 @if($info->id == 1)
-                                    <span class="help-block"><i class="fa fa-info-circle"></i> 默认管理员不受状态/权限限制</span>
+                                    <span class="help-block"><i class="fa fa-info-circle"></i> 默认管理员是不受状态/权限限制,可以不用赋权</span>
                                     <input type="hidden" name="status" value="{{ $info->status }}">
                                 @endif
                             </div>
