@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Libraries\Cache;
 use App\Models\Admin;
 use App\Validate\AdminValidate;
 use Illuminate\Http\Request;
@@ -82,5 +83,12 @@ class IndexController extends BaseController
     {
         getAdminAuth()->logout();
         return redirect()->route('admin.login');
+    }
+
+    // 清空缓存
+    public function clearCache(Request $request)
+    {
+        Cache::getInstance()->clear();
+        return response()->json(['code'=>200, 'data'=>[], 'msg'=>'清理完成']);
     }
 }

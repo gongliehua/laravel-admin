@@ -35,11 +35,13 @@
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
                     <!-- refresh -->
-                    <li><a href=""><i class="fa fa-refresh"></i></a></li>
+                    <li><a href="" title="刷新页面"><i class="fa fa-refresh"></i></a></li>
+                    @if(checkPermission('admin.clear_cache'))
                     <!-- trash -->
-                    <li><a href="javascript:;" id="trash"><i class="fa fa-trash"></i></a></li>
+                    <li><a href="javascript:clearCache();" title="清空缓存"><i class="fa fa-trash"></i></a></li>
+                    @endif
                     <!-- home -->
-                    <li><a href="{{ url('/') }}" target="_blank"><i class="fa fa-home"></i></a></li>
+                    <li><a href="{{ url('/') }}" target="_blank" title="网站首页"><i class="fa fa-home"></i></a></li>
                     <!-- User Account: style can be found in dropdown.less -->
                     <li class="dropdown user user-menu">
                         <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
@@ -90,7 +92,6 @@
     @yield('footer')
     <script>
         $(document).ready(function () {
-            $('.select2').select2();
             $('.sidebar-menu').tree()
         })
     </script>

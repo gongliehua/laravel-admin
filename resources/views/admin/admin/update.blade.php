@@ -65,7 +65,7 @@
                             <div class="col-sm-9">
                                 @foreach((new \App\Models\Admin())->statusLabel as $key=>$val)
                                     <label class="radio-inline">
-                                        <input type="radio" name="status" value="{{ $key }}" @if($info->status == $key) checked @endif > {{ $val }}
+                                        <input type="radio" name="status" value="{{ $key }}" @if($info->status == $key) checked @endif @if($info->id == 1) disabled @endif > {{ $val }}
                                     </label>
                                 @endforeach
                             </div>
@@ -73,7 +73,7 @@
                         <div class="form-group">
                             <label for="" class="col-sm-2 control-label">角色</label>
                             <div class="col-sm-9">
-                                <select name="role_id[]" id="role_id" class="form-control select2" multiple>
+                                <select name="role_id[]" id="role_id" class="form-control select2" multiple @if($info->id == 1) disabled @endif >
                                     @if(count($allRole))
                                         @foreach ($allRole as $key=>$value)
                                             <option value="{{ $value['id'] }}" @if(in_array($value['id'], $roleId)) selected @endif >{{ $value['name'] }}</option>
@@ -87,7 +87,7 @@
                         <div class="form-group">
                             <label for="" class="col-sm-2 control-label">权限</label>
                             <div class="col-sm-9">
-                                <select name="permission_id[]" id="permission_id" class="form-control select2" multiple>
+                                <select name="permission_id[]" id="permission_id" class="form-control select2" multiple @if($info->id == 1) disabled @endif >
                                     @if(count($allPermission))
                                         @foreach ($allPermission as $key=>$value)
                                             <option value="{{ $value['id'] }}" @if(in_array($value['id'], $permissionId)) selected @endif >@if($value['parent_id'] === 0) ｜ @endif {{ str_repeat('－', $value['level'] * 4) }} {{ $value['title'] }}</option>
@@ -96,6 +96,10 @@
                                         <option value="" disabled>暂无数据</option>
                                     @endif
                                 </select>
+                                @if($info->id == 1)
+                                    <span class="help-block"><i class="fa fa-info-circle"></i> 默认管理员不受状态/权限限制</span>
+                                    <input type="hidden" name="status" value="{{ $info->status }}">
+                                @endif
                             </div>
                         </div>
                     </div>

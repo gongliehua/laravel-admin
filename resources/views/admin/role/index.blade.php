@@ -65,7 +65,9 @@
                     <div class="box">
                         <div class="box-header with-border">
                             <div class="pull-left">
+                                @if(checkPermission('admin.role.create'))
                                 <a href="javascript:add();" class="btn btn-sm btn-success" title="添加"><i class="fa fa-plus"></i><span class="hidden-xs"> 添加</span></a>
+                                @endif
                             </div>
                         </div>
                         <!-- /.box-header -->
@@ -86,9 +88,15 @@
                                             <td>{{ $value->status_text }}</td>
                                             <td>{{ str_limit($value->remark) }}</td>
                                             <td>
+                                                @if(checkPermission('admin.role.show'))
                                                 <a href="javascript:show({{ $value->id }});" class="btn btn-xs btn-info" title="查看"><i class="fa fa-eye"></i></a>
+                                                @endif
+                                                @if(checkPermission('admin.role.update'))
                                                 <a href="javascript:edit({{ $value->id }});" class="btn btn-xs btn-success" title="修改"><i class="fa fa-pencil"></i></a>
+                                                @endif
+                                                @if(checkPermission('admin.role.delete'))
                                                 <a href="javascript:del({{ $value->id }});" class="btn btn-xs btn-danger" title="删除"><i class="fa fa-trash"></i></a>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach

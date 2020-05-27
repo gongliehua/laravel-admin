@@ -62,6 +62,7 @@ return [
         'admin.config.delete',
         'admin.permission.create',
         'admin.permission.delete',
+        'admin.permission.check',
     ],
 
     /*

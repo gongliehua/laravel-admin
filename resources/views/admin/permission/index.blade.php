@@ -27,7 +27,12 @@
                     <div class="box">
                         <div class="box-header with-border">
                             <div class="pull-left">
+                                @if(config('admin.develop') && getAdminAuth()->id() == 1)
                                 <a href="javascript:add();" class="btn btn-sm btn-success" title="添加"><i class="fa fa-plus"></i><span class="hidden-xs"> 添加</span></a>
+                                @endif
+                                @if(config('admin.develop') && getAdminAuth()->id() == 1)
+                                <a href="javascript:check();" class="btn btn-sm btn-warning" title="检测"><i class="fa fa-check"></i><span class="hidden-xs"> 检测</span></a>
+                                @endif
                             </div>
                         </div>
                         <!-- /.box-header -->
@@ -58,9 +63,15 @@
                                             <td>{{ $value['is_menu_text'] }}</td>
                                             <td>{{ $value['status_text'] }}</td>
                                             <td>
+                                                @if(checkPermission('admin.permission.show'))
                                                 <a href="javascript:show({{ $value['id'] }});" class="btn btn-xs btn-info" title="查看"><i class="fa fa-eye"></i></a>
+                                                @endif
+                                                @if(checkPermission('admin.permission.update'))
                                                 <a href="javascript:edit({{ $value['id'] }});" class="btn btn-xs btn-success" title="修改"><i class="fa fa-pencil"></i></a>
+                                                @endif
+                                                @if(config('admin.develop') && getAdminAuth()->id() == 1)
                                                 <a href="javascript:del({{ $value['id'] }});" class="btn btn-xs btn-danger" title="删除"><i class="fa fa-trash"></i></a>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -236,6 +247,40 @@
                 }
             });
             return false;
+        }
+        function check() {
+            layui.use('layer', function(){
+                var layer = layui.layer;
+                layer.ready(function(){
+                    layer.confirm("未入库的路由将会入库，确定要操作吗？", function(index){
+                        $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+                        $.ajax({
+                            url: "{{ route('admin.permission.check') }}",
+                            type: 'POST',
+                            data: {},
+                            dataType: "json",
+                            success: function(res){
+                                layui.use('layer', function () {
+                                    var layer = layui.layer;
+                                    layer.ready(function () {
+                                        layer.alert("共新增"+res.data.addRouteName.length+"条路由，"+res.data.failRouteName.length+"条操作失败。\n", {}, function (index) {
+                                            location.reload();
+                                        });
+                                    });
+                                });
+                            },
+                            error: function(){
+                                layui.use('layer', function () {
+                                    var layer = layui.layer;
+                                    layer.ready(function () {
+                                        layer.msg('网络错误');
+                                    });
+                                });
+                            }
+                        });
+                    });
+                });
+            });
         }
     </script>
 @endsection

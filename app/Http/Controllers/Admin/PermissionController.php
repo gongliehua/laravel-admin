@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Libraries\Cache;
 use App\Models\Permission;
 use App\Validate\PermissionValidate;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Route;
 
 // 权限
 class PermissionController extends BaseController
@@ -26,7 +28,7 @@ class PermissionController extends BaseController
         $offset = ($page - 1) * $pageSize;
 
         // 查找所有数据排序后再分页显示
-        $result = allPermission();
+        $result = Cache::getInstance()->getAllPermission();
         $result = new LengthAwarePaginator(array_slice($result, $offset, $pageSize), count($result), $pageSize, $page, ['path'=>$request->url(), 'query'=>$request->query()]);
 
         return view('admin.permission.index', compact('result'));
@@ -46,7 +48,7 @@ class PermissionController extends BaseController
             $model = (new Permission())->add($params);
             return response()->json($model);
         }
-        $allPermission = allPermission();
+        $allPermission = Cache::getInstance()->getAllPermission();
         return view('admin.permission.create', compact('allPermission'));
     }
 
@@ -57,7 +59,7 @@ class PermissionController extends BaseController
         if (!$info) {
             abort(422, '该信息未找到，建议刷新页面后重试！');
         }
-        $allPermission = allPermission();
+        $allPermission = Cache::getInstance()->getAllPermission();
         return view('admin.permission.show', compact('info', 'allPermission'));
     }
 
@@ -79,7 +81,7 @@ class PermissionController extends BaseController
         if (!$info) {
             abort(422, '该信息未找到，建议刷新页面后重试！');
         }
-        $allPermission = allPermission();
+        $allPermission = Cache::getInstance()->getAllPermission();
         return view('admin.permission.update', compact('info', 'allPermission'));
     }
 
@@ -88,5 +90,39 @@ class PermissionController extends BaseController
     {
         $result = (new Permission())->del($request->input('id'));
         return response()->json($result);
+    }
+
+    // 检测(如果表中不存在,则放入表中)
+    public function check(Request $request)
+    {
+        $addRouteName = [];             //新增路由
+        $failRouteName = [];            //操作失败路由
+        $routes = Route::getRoutes();   //所有路由
+        foreach ($routes as $route) {
+            // 仅对admin中间件中的路由操作
+            if(in_array('admin', $route->action['middleware'])) {
+                $currentRouteName = $route->getName();
+                // 排除不入库路由
+                if (in_array($currentRouteName, config('admin.noNeedLogin')) || in_array($currentRouteName, config('admin.noNeedRight')) || in_array($currentRouteName, config('admin.noNeedDevelop'))) {
+                    continue;
+                }
+                // 判断是否入库,如果未入库则入库
+                $hasRouteName = Permission::where('slug', $currentRouteName)->value('id');
+                if (!$hasRouteName) {
+                    $permission = new Permission();
+                    $permission->title = $currentRouteName;
+                    $permission->slug = $currentRouteName;
+                    $permission->icon = 'fa-circle-o';
+                    $permission->sort = 100;
+                    if ($permission->save()) {
+                        $addRouteName[] = $currentRouteName;
+                    } else {
+                        $failRouteName[] = $currentRouteName;
+                    }
+                }
+            }
+
+        }
+        return response()->json(['code'=>200, 'data'=>compact('addRouteName', 'failRouteName'), 'msg'=>'请求成功']);
     }
 }

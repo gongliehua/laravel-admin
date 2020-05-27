@@ -102,10 +102,16 @@ function toMenuHtml($data = [])
 {
     $result = '';
     foreach ($data as $key=>$value) {
+        // 这个路由名称不存在可能会抛异常,所以用try捕获
+        try {
+            $routeUrl = strlen($value['slug']) ? route($value['slug']) : 'javascript:;';
+        } catch (\Exception $e) {
+            $routeUrl = 'javascript:;';
+        }
         if (empty($value['child'])) {
-            $aTag  = '<a href="'. @route($value['slug']) .'"><i class="menu-icon fa '. $value['icon'] .'"></i><span class="menu-text">'. $value['title'] .'</span></a><b class="arrow"></b>';
+            $aTag  = '<a href="'. $routeUrl .'"><i class="menu-icon fa '. $value['icon'] .'"></i><span class="menu-text">'. $value['title'] .'</span></a><b class="arrow"></b>';
         } else {
-            $aTag  = '<a href="'. @route($value['slug']) .'" class="dropdown-toggle"><i class="menu-icon fa '. $value['icon'] .'"></i><span class="menu-text">'. $value['title'] .'</span><b class="arrow fa fa-angle-down"></b></a><b class="arrow"></b>';
+            $aTag  = '<a href="'. $routeUrl .'" class="dropdown-toggle"><i class="menu-icon fa '. $value['icon'] .'"></i><span class="menu-text">'. $value['title'] .'</span><b class="arrow fa fa-angle-down"></b></a><b class="arrow"></b>';
         }
         $result .= '<li class="">'.$aTag;
         if (!empty($value['child'])) {
@@ -129,22 +135,11 @@ function getParents($data = [], $id)
     return $result;
 }
 
-// 所有权限
-function allPermission()
-{
-    static $data = null;
-    if ($data === null) {
-        $data = \App\Models\Permission::orderBy('sort', 'ASC')->get()->toArray();
-        $data = arraySort($data);
-        arraySort([], 0, 0, true);
-    }
-    return $data;
-}
-
 // 获取子权限ID
 function getChildPermissionId($id)
 {
-    $allChildPermission = arraySort(allPermission(), $id);
+    $allPermission = \App\Libraries\Cache::getInstance()->getAllPermission();
+    $allChildPermission = arraySort($allPermission, $id);
     arraySort([], 0, 0, true);
     $allChildPermissionId = array_column($allChildPermission, 'id');
     return $allChildPermissionId;

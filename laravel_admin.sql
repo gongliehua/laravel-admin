@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 26/05/2020 18:29:39
+ Date: 27/05/2020 18:24:41
 */
 
 SET NAMES utf8mb4;
@@ -52,7 +52,7 @@ CREATE TABLE `admins`  (
 -- ----------------------------
 -- Records of admins
 -- ----------------------------
-INSERT INTO `admins` VALUES (1, 'admin', '$2y$10$67Yi/NxXB53iMwm2a30IT.wxsdDUXOCUSiX78H7mw8nnkcDI.a5VG', '默认管理员', 0, NULL, NULL, 1, NULL, '2020-05-26 17:07:27', '2020-05-26 17:07:29', NULL);
+INSERT INTO `admins` VALUES (1, 'admin', '$2y$10$go4kR6XbqWjuj5ZbysPU/eZnNNr9/cNN9pmjoMJFLzyRIz81QRJPq', '默认管理员', 0, NULL, NULL, 1, NULL, '2020-05-27 18:15:26', '2020-05-27 18:15:28', NULL);
 
 -- ----------------------------
 -- Table structure for configs
@@ -107,7 +107,30 @@ CREATE TABLE `permissions`  (
   `updated_at` timestamp(0) NULL DEFAULT NULL,
   `deleted_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '权限表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '权限表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of permissions
+-- ----------------------------
+INSERT INTO `permissions` VALUES (1, 0, '清空缓存', 'admin.clear_cache', 'fa-circle-o', 2, 1, NULL, 10, '2020-05-27 18:16:01', '2020-05-27 18:22:10', NULL);
+INSERT INTO `permissions` VALUES (2, 18, '用户管理', 'admin.admin', 'fa-circle-o', 1, 1, NULL, 10, '2020-05-27 18:16:01', '2020-05-27 18:18:21', NULL);
+INSERT INTO `permissions` VALUES (3, 2, '用户添加', 'admin.admin.create', 'fa-circle-o', 2, 1, NULL, 11, '2020-05-27 18:16:01', '2020-05-27 18:18:50', NULL);
+INSERT INTO `permissions` VALUES (4, 2, '用户查看', 'admin.admin.show', 'fa-circle-o', 2, 1, NULL, 100, '2020-05-27 18:16:01', '2020-05-27 18:19:34', NULL);
+INSERT INTO `permissions` VALUES (5, 2, '用户修改', 'admin.admin.update', 'fa-circle-o', 2, 1, NULL, 100, '2020-05-27 18:16:01', '2020-05-27 18:19:45', NULL);
+INSERT INTO `permissions` VALUES (6, 2, '用户删除', 'admin.admin.delete', 'fa-circle-o', 2, 1, NULL, 100, '2020-05-27 18:16:01', '2020-05-27 18:20:01', NULL);
+INSERT INTO `permissions` VALUES (7, 18, '角色管理', 'admin.role', 'fa-circle-o', 1, 1, NULL, 100, '2020-05-27 18:16:01', '2020-05-27 18:20:21', NULL);
+INSERT INTO `permissions` VALUES (8, 7, '角色添加', 'admin.role.create', 'fa-circle-o', 2, 1, NULL, 100, '2020-05-27 18:16:01', '2020-05-27 18:20:37', NULL);
+INSERT INTO `permissions` VALUES (9, 7, '角色查看', 'admin.role.show', 'fa-circle-o', 2, 1, NULL, 100, '2020-05-27 18:16:01', '2020-05-27 18:20:49', NULL);
+INSERT INTO `permissions` VALUES (10, 7, '角色修改', 'admin.role.update', 'fa-circle-o', 2, 1, NULL, 100, '2020-05-27 18:16:01', '2020-05-27 18:21:03', NULL);
+INSERT INTO `permissions` VALUES (11, 7, '角色删除', 'admin.role.delete', 'fa-circle-o', 2, 1, NULL, 100, '2020-05-27 18:16:01', '2020-05-27 18:21:13', NULL);
+INSERT INTO `permissions` VALUES (12, 18, '权限管理', 'admin.permission', 'fa-circle-o', 1, 1, NULL, 100, '2020-05-27 18:16:01', '2020-05-27 18:21:24', NULL);
+INSERT INTO `permissions` VALUES (13, 12, '权限查看', 'admin.permission.show', 'fa-circle-o', 2, 1, NULL, 100, '2020-05-27 18:16:01', '2020-05-27 18:21:48', NULL);
+INSERT INTO `permissions` VALUES (14, 12, '权限修改', 'admin.permission.update', 'fa-circle-o', 2, 1, NULL, 100, '2020-05-27 18:16:02', '2020-05-27 18:22:39', NULL);
+INSERT INTO `permissions` VALUES (15, 19, '系统设置', 'admin.setting', 'fa-circle-o', 1, 1, NULL, 100, '2020-05-27 18:16:02', '2020-05-27 18:23:31', NULL);
+INSERT INTO `permissions` VALUES (16, 19, '日志列表', 'admin.operation_log', 'fa-circle-o', 1, 1, NULL, 100, '2020-05-27 18:16:02', '2020-05-27 18:23:48', NULL);
+INSERT INTO `permissions` VALUES (17, 16, '日常查看', 'admin.operation_log.show', 'fa-circle-o', 2, 1, NULL, 100, '2020-05-27 18:16:02', '2020-05-27 18:23:58', NULL);
+INSERT INTO `permissions` VALUES (18, 0, '管理员管理', NULL, 'fa-group', 1, 1, NULL, 10, '2020-05-27 18:17:10', '2020-05-27 18:17:10', NULL);
+INSERT INTO `permissions` VALUES (19, 0, '系统管理', NULL, 'fa-gears', 1, 1, NULL, 11, '2020-05-27 18:17:37', '2020-05-27 18:17:37', NULL);
 
 -- ----------------------------
 -- Table structure for role_admins

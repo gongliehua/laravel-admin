@@ -15,10 +15,11 @@ Route::view('/', 'welcome');
 
 // 后台路由
 Route::group(['prefix'=>config('admin.routePrefix'), 'namespace'=>'Admin', 'middleware'=>['web', 'admin']], function () {
-    Route::any('/', 'IndexController@index')->name('admin');                    //后台首页
-    Route::any('profile', 'IndexController@profile')->name('admin.profile');    //个人信息
-    Route::any('login', 'IndexController@login')->name('admin.login');          //后台登录
-    Route::any('logout', 'IndexController@logout')->name('admin.logout');       //退出登录
+    Route::any('/', 'IndexController@index')->name('admin');                            //后台首页
+    Route::any('profile', 'IndexController@profile')->name('admin.profile');            //个人信息
+    Route::any('login', 'IndexController@login')->name('admin.login');                  //后台登录
+    Route::any('logout', 'IndexController@logout')->name('admin.logout');               //退出登录
+    Route::any('clear_cache', 'IndexController@clearCache')->name('admin.clear_cache'); //清空缓存
 
     Route::any('admin', 'AdminController@index')->name('admin.admin');                  //用户管理
     Route::any('admin/create', 'AdminController@create')->name('admin.admin.create');   //用户添加
@@ -37,6 +38,7 @@ Route::group(['prefix'=>config('admin.routePrefix'), 'namespace'=>'Admin', 'midd
     Route::any('permission/show', 'PermissionController@show')->name('admin.permission.show');          //权限查看
     Route::any('permission/update', 'PermissionController@update')->name('admin.permission.update');    //权限修改
     Route::any('permission/delete', 'PermissionController@delete')->name('admin.permission.delete');    //权限删除
+    Route::any('permission/check', 'PermissionController@check')->name('admin.permission.check');       //权限检测
 
     Route::any('setting', 'ConfigController@setting')->name('admin.setting');   //系统设置
 

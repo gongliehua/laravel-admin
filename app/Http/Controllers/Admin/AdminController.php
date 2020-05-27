@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Libraries\Cache;
 use App\Models\Role;
 use App\Models\RoleAdmin;
 use App\Models\Admin;
@@ -51,8 +52,8 @@ class AdminController extends BaseController
             $model = (new Admin())->add($params);
             return response()->json($model);
         }
-        $allRole = Role::all();
-        $allPermission = allPermission();
+        $allRole = Cache::getInstance()->getAllRole();
+        $allPermission = Cache::getInstance()->getAllPermission();
         return view('admin.admin.create', compact('allRole', 'allPermission'));
     }
 
@@ -63,10 +64,10 @@ class AdminController extends BaseController
         if (!$info) {
             abort(422, '该信息未找到，建议刷新页面后重试！');
         }
-        $roleId = RoleAdmin::where('admin_id', $info->id)->pluck('role_id')->toArray();
-        $permissionId = AdminPermission::where('admin_id', $info->id)->pluck('permission_id')->toArray();
-        $allRole = Role::all();
-        $allPermission = allPermission();
+        $roleId = Cache::getInstance()->getAdminRoleId($info->id);
+        $permissionId = Cache::getInstance()->getAdminPermissionId($info->id);
+        $allRole = Cache::getInstance()->getAllRole();
+        $allPermission = Cache::getInstance()->getAllPermission();
         return view('admin.admin.show', compact('info', 'roleId', 'permissionId', 'allRole', 'allPermission'));
     }
 
@@ -111,10 +112,10 @@ class AdminController extends BaseController
         if (!$info) {
             abort(422, '该信息未找到，建议刷新页面后重试！');
         }
-        $roleId = RoleAdmin::where('admin_id', $info->id)->pluck('role_id')->toArray();
-        $permissionId = AdminPermission::where('admin_id', $info->id)->pluck('permission_id')->toArray();
-        $allRole = Role::all();
-        $allPermission = allPermission();
+        $roleId = Cache::getInstance()->getAdminRoleId($info->id);
+        $permissionId = Cache::getInstance()->getAdminPermissionId($info->id);
+        $allRole = Cache::getInstance()->getAllRole();
+        $allPermission = Cache::getInstance()->getAllPermission();
         return view('admin.admin.update', compact('info', 'roleId', 'permissionId', 'allRole', 'allPermission'));
     }
 

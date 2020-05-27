@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Libraries\Cache;
 use App\Models\Role;
 use App\Models\RolePermission;
 use App\Validate\RoleValidate;
@@ -32,7 +33,7 @@ class RoleController extends BaseController
             $model = (new Role())->add($params);
             return response()->json($model);
         }
-        $allPermission = allPermission();
+        $allPermission = Cache::getInstance()->getAllPermission();
         return view('admin.role.create', compact('allPermission'));
     }
 
@@ -43,8 +44,8 @@ class RoleController extends BaseController
         if (!$info) {
             abort(422, '该信息未找到，建议刷新页面后重试！');
         }
-        $permissionId = RolePermission::where('role_id', $info->id)->pluck('permission_id')->toArray();
-        $allPermission = allPermission();
+        $permissionId = Cache::getInstance()->getRolePermissionId($info->id);
+        $allPermission = Cache::getInstance()->getAllPermission();
         return view('admin.role.show', compact('info', 'allPermission', 'permissionId'));
     }
 
@@ -66,8 +67,8 @@ class RoleController extends BaseController
         if (!$info) {
             abort(422, '该信息未找到，建议刷新页面后重试！');
         }
-        $permissionId = RolePermission::where('role_id', $info->id)->pluck('permission_id')->toArray();
-        $allPermission = allPermission();
+        $permissionId = Cache::getInstance()->getRolePermissionId($info->id);
+        $allPermission = Cache::getInstance()->getAllPermission();
         return view('admin.role.update', compact('info', 'allPermission', 'permissionId'));
     }
 

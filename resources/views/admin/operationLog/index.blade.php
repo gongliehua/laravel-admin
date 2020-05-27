@@ -94,7 +94,9 @@
                                             <td>{{ $value->path }}</td>
                                             <td>{{ $value->admin->username }}</td>
                                             <td>
+                                                @if(checkPermission('admin.operation_log.show'))
                                                 <a href="javascript:show({{ $value->id }});" class="btn btn-xs btn-info" title="查看"><i class="fa fa-eye"></i></a>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach

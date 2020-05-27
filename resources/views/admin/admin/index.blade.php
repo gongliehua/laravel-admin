@@ -88,7 +88,9 @@
                     <div class="box">
                         <div class="box-header with-border">
                             <div class="pull-left">
+                                @if(checkPermission('admin.admin.create'))
                                 <a href="javascript:add();" class="btn btn-sm btn-success" title="添加"><i class="fa fa-plus"></i><span class="hidden-xs"> 添加</span></a>
+                                @endif
                             </div>
                         </div>
                         <!-- /.box-header -->
@@ -113,12 +115,18 @@
                                             <td>{{ str_limit($value->email) }}</td>
                                             <td>{{ $value->status_text }}</td>
                                             <td>
+                                                @if(checkPermission('admin.admin.show'))
                                                 <a href="javascript:show({{ $value->id }});" class="btn btn-xs btn-info" title="查看"><i class="fa fa-eye"></i></a>
+                                                @endif
+                                                @if(checkPermission('admin.admin.update'))
                                                 <a href="javascript:edit({{ $value->id }});" class="btn btn-xs btn-success" title="修改"><i class="fa fa-pencil"></i></a>
-                                                @if($value->id == 1)
-                                                    <a href="javascript:;" class="btn btn-xs btn-danger" title="默认管理员不能删除" disabled><i class="fa fa-trash"></i></a>
-                                                @else
-                                                    <a href="javascript:del({{ $value->id }});" class="btn btn-xs btn-danger" title="删除"><i class="fa fa-trash"></i></a>
+                                                @endif
+                                                @if(checkPermission('admin.admin.delete'))
+                                                    @if($value->id == 1)
+                                                        <a href="javascript:;" class="btn btn-xs btn-danger" title="默认管理员不能删除" disabled><i class="fa fa-trash"></i></a>
+                                                    @else
+                                                        <a href="javascript:del({{ $value->id }});" class="btn btn-xs btn-danger" title="删除"><i class="fa fa-trash"></i></a>
+                                                    @endif
                                                 @endif
                                             </td>
                                         </tr>

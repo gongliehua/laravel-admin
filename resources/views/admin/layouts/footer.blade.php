@@ -15,3 +15,42 @@
     <!-- fileinput -->
     <script src="{{ asset('plugins/bootstrap-fileinput/js/fileinput.min.js') }}"></script>
     <script src="{{ asset('plugins/bootstrap-fileinput/js/locales/zh.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2();
+        });
+        function clearCache() {
+           layui.use('layer', function(){
+               var layer = layui.layer;
+               layer.ready(function(){
+                   layer.confirm("确定要清空缓存吗？", function(index){
+                       $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+                       $.ajax({
+                           url: "{{ route('admin.clear_cache') }}",
+                           type: 'POST',
+                           data: {},
+                           dataType: "json",
+                           success: function(res){
+                               layui.use('layer', function () {
+                                   var layer = layui.layer;
+                                   layer.ready(function () {
+                                       layer.msg(res.msg, {}, function(){
+                                           location.reload();
+                                       });
+                                   });
+                               });
+                           },
+                           error: function(){
+                               layui.use('layer', function () {
+                                   var layer = layui.layer;
+                                   layer.ready(function () {
+                                       layer.msg('网络错误');
+                                   });
+                               });
+                           }
+                       });
+                   });
+               });
+           });
+        }
+    </script>
