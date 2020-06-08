@@ -74,9 +74,9 @@ class PermissionController extends BaseController
             if ($validate['code'] != 200) {
                 return response()->json($validate);
             }
-            // 如果 非开发模式并且非默认管理员 是不能修改权限标识的(防止普通用户乱操作,导致权限错乱)
+            // 如果 非开发模式并且非默认管理员 是不能修改上级权限,权限标识的(防止普通用户乱操作,导致权限错乱),是否菜单
             if (!(config('admin.develop') && getAdminAuth()->id() == 1)) {
-                unset($params['slug']);
+                unset($params['parent_id'], $params['slug'], $params['is_menu']);
             }
             // 数据操作
             $model = (new Permission())->edit($params);

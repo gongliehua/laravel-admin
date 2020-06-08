@@ -45,7 +45,7 @@ class AdminValidate
         $messages = [];
         $customAttributes = [
             'username'=>'用户名',
-            'password'=>'密码',
+            'password'=>'新密码',
             'name'=>'姓名',
             'sex'=>'性别',
             'avatar'=>'头像',
@@ -118,7 +118,7 @@ class AdminValidate
         $customAttributes = [
             'id'=>'管理员ID',
             'username'=>'用户名',
-            'password'=>'密码',
+            'password'=>'新密码',
             'name'=>'姓名',
             'sex'=>'性别',
             'avatar'=>'头像',

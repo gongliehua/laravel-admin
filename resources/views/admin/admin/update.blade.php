@@ -20,15 +20,15 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="password" class="col-sm-2 control-label"> 密码</label>
+                            <label for="password" class="col-sm-2 control-label"> 新密码</label>
                             <div class="col-sm-9">
-                                <input type="password" name="password" class="form-control" id="password" placeholder="密码" autocomplete="off">
+                                <input type="password" name="password" class="form-control" id="password" placeholder="不设置则不修改密码" autocomplete="off">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="password_confirmation" class="col-sm-2 control-label"> 确认密码</label>
+                            <label for="password_confirmation" class="col-sm-2 control-label"> 确认新密码</label>
                             <div class="col-sm-9">
-                                <input type="password" name="password_confirmation" class="form-control" id="password_confirmation" placeholder="确认密码必须与密码一致" autocomplete="off">
+                                <input type="password" name="password_confirmation" class="form-control" id="password_confirmation" placeholder="确认新密码必须与新密码一致" autocomplete="off">
                             </div>
                         </div>
                         <div class="form-group">

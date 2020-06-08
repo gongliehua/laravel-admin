@@ -15,12 +15,15 @@
                         <div class="form-group">
                             <label for="parent_id" class="col-sm-2 control-label"><i class="text-red">*</i> 上级权限</label>
                             <div class="col-sm-9">
-                                <select name="parent_id" id="parent_id" class="form-control select2">
+                                <select name="parent_id" id="parent_id" class="form-control select2" @if(!(config('admin.develop') && getAdminAuth()->id() == 1)) disabled @endif >
                                     <option value="0">顶级权限</option>
                                     @foreach($allPermission as $value)
                                         <option value="{{ $value['id'] }}" @if($info->parent_id == $value['id']) selected @endif >@if($value['parent_id'] == 0) ｜ @endif {{ str_repeat('－', $value['level'] * 4) }} {{ $value['title'] }}</option>
                                     @endforeach
                                 </select>
+                                @if(!(config('admin.develop') && getAdminAuth()->id() == 1))
+                                    <input type="hidden" name="parent_id" value="{{ $info->parent_id }}">
+                                @endif
                             </div>
                         </div>
                         <div class="form-group">
@@ -47,11 +50,14 @@
                         <div class="form-group">
                             <label for="" class="col-sm-2 control-label"><i class="text-red">*</i> 菜单</label>
                             <div class="col-sm-9">
-                                <select name="is_menu" class="form-control">
+                                <select name="is_menu" class="form-control" @if(!(config('admin.develop') && getAdminAuth()->id() == 1)) disabled @endif >
                                     @foreach((new \App\Models\Permission())->is_menuLabel as $key=>$value)
                                         <option value="{{ $key }}" @if($info->is_menu == $key) selected @endif >{{ $value }}</option>
                                     @endforeach
                                 </select>
+                                @if(!(config('admin.develop') && getAdminAuth()->id() == 1))
+                                    <input type="hidden" name="is_menu" value="{{ $info->is_menu }}">
+                                @endif
                             </div>
                         </div>
                         <div class="form-group">

@@ -34,6 +34,7 @@ npm install bower -g
 bower install
 ```
 4.导入laravel_admin.sql数据库文件，修改.env配置信息就OK了
+后台地址:/admin 账号:admin 密码:123456
 ```
 # 功能不是很多，后面有时间再慢慢加吧。如消息，日志，用户，导入导出等功能。
 ```
